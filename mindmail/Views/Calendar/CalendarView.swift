@@ -52,7 +52,7 @@ struct CalendarView: View {
                 .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
                 .foregroundColor(Theme.Colors.textPrimary)
             
-            Text("Let's reflect on your journey")
+            Text("Reflect in your daily journal")
                 .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
                 .foregroundColor(Theme.Colors.textSecondary)
             
@@ -338,6 +338,8 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
+    @State private var shadowOpacity: Double = 0.3
+    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
@@ -373,14 +375,44 @@ struct DayCell: View {
                     .strokeBorder(borderColor, lineWidth: (isToday || isSelected) ? 2.5 : 0)
             )
             .shadow(
-                color: (isToday || isSelected) ? Theme.Colors.cherryBlossomPink.opacity(0.3) : Color.clear,
+                color: (isToday || isSelected) ? Theme.Colors.cherryBlossomPink.opacity(shadowOpacity) : Color.clear,
                 radius: (isToday || isSelected) ? 6 : 0,
                 x: 0,
                 y: 0
             )
+            .onAppear {
+                if isToday || isSelected {
+                    print("✨ [DayCell] Starting shadow pulse for \(isToday ? "today" : "selected") date")
+                    startShadowPulse()
+                }
+            }
+            .onChange(of: isSelected) { _, newValue in
+                if newValue {
+                    print("✨ [DayCell] Date selected, starting pulse")
+                    startShadowPulse()
+                } else {
+                    print("✨ [DayCell] Date deselected, stopping pulse")
+                    stopShadowPulse()
+                }
+            }
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isFuture)
+    }
+    
+    private func startShadowPulse() {
+        withAnimation(
+            .easeInOut(duration: 1.8)
+            .repeatForever(autoreverses: true)
+        ) {
+            shadowOpacity = 0.6
+        }
+    }
+    
+    private func stopShadowPulse() {
+        withAnimation(.easeOut(duration: 0.4)) {
+            shadowOpacity = 0.3
+        }
     }
     
     private var backgroundColor: Color {
