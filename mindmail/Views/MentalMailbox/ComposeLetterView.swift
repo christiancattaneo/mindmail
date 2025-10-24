@@ -270,7 +270,11 @@ struct ComposeLetterView: View {
                     displayedComponents: [.date, .hourAndMinute]
                 )
                 .datePickerStyle(.graphical)
+                .tint(Theme.Colors.lavenderDark)
                 .padding()
+                .background(Color.white)
+                .cornerRadius(Theme.CornerRadius.large)
+                .padding(.horizontal)
                 
                 Button("Done") {
                     showCustomPicker = false
@@ -287,9 +291,10 @@ struct ComposeLetterView: View {
                     )
                 )
                 .cornerRadius(Theme.CornerRadius.large)
-                .padding()
+                .padding(.horizontal)
             }
-            .themeBackground()
+            .padding(.vertical, Theme.Spacing.large)
+            .background(Theme.Colors.softLavender)
             .navigationTitle("Pick a Date")
             .navigationBarTitleDisplayMode(.inline)
         }
