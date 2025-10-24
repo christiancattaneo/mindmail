@@ -265,6 +265,8 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
+    @State private var glowOpacity: Double = 0.3
+    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
@@ -273,20 +275,39 @@ struct DayCell: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: Theme.Spacing.xxxSmall) {
-                // Day number
-                Text(dayNumber)
-                    .font(.system(size: Theme.Typography.subheadline, weight: isToday ? Theme.Typography.bold : Theme.Typography.medium))
-                    .foregroundColor(isFuture ? Theme.Colors.textSecondary.opacity(0.5) : Theme.Colors.textPrimary)
-                
-                // Mood emoji or indicator
-                if let entry = entry {
-                    Text(entry.mood.emoji)
-                        .font(.system(size: 22))
-                } else {
+            ZStack {
+                // Subtle glow effect for today (behind everything)
+                if isToday {
                     Circle()
-                        .fill(isFuture ? Color.clear : Theme.Colors.textSecondary.opacity(0.2))
-                        .frame(width: 5, height: 5)
+                        .fill(Theme.Colors.cherryBlossomPink.opacity(glowOpacity))
+                        .frame(width: 36, height: 36)
+                        .blur(radius: 8)
+                        .onAppear {
+                            withAnimation(
+                                .easeInOut(duration: 2.0)
+                                .repeatForever(autoreverses: true)
+                            ) {
+                                glowOpacity = 0.6
+                            }
+                        }
+                }
+                
+                // Main content (unaffected by glow animation)
+                VStack(spacing: Theme.Spacing.xxxSmall) {
+                    // Day number
+                    Text(dayNumber)
+                        .font(.system(size: Theme.Typography.subheadline, weight: isToday ? Theme.Typography.bold : Theme.Typography.medium))
+                        .foregroundColor(isFuture ? Theme.Colors.textSecondary.opacity(0.5) : Theme.Colors.textPrimary)
+                    
+                    // Mood emoji or indicator
+                    if let entry = entry {
+                        Text(entry.mood.emoji)
+                            .font(.system(size: 22))
+                    } else {
+                        Circle()
+                            .fill(isFuture ? Color.clear : Theme.Colors.textSecondary.opacity(0.2))
+                            .frame(width: 5, height: 5)
+                    }
                 }
             }
             .frame(maxWidth: .infinity)
@@ -296,9 +317,9 @@ struct DayCell: View {
                     .fill(backgroundColor)
             )
             .overlay(
-                // Static highlight for today - NO ANIMATION to prevent bouncing
+                // Static border for today and selected
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
-                    .strokeBorder(borderColor, lineWidth: isToday ? 2.5 : 0)
+                    .strokeBorder(borderColor, lineWidth: isToday ? 2.5 : isSelected ? 2 : 0)
             )
         }
         .disabled(isFuture)
