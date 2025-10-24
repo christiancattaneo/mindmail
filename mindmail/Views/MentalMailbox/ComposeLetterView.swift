@@ -26,22 +26,32 @@ struct ComposeLetterView: View {
                     // Paper-like letter card
                     VStack(spacing: Theme.Spacing.medium) {
                         // Subject line
-                        VStack(alignment: .leading, spacing: Theme.Spacing.xxSmall) {
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xSmall) {
                             Text("Subject (optional)")
-                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.medium))
-                                .foregroundColor(Theme.Colors.textSecondary)
-                            
-                            TextField("A note about...", text: $viewModel.subject)
-                                .font(.system(size: Theme.Typography.headline, weight: Theme.Typography.semibold))
+                                .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
                                 .foregroundColor(Theme.Colors.textPrimary)
-                                .focused($focusedField, equals: .subject)
-                                .onChange(of: viewModel.subject) { _, newValue in
-                                    if newValue.count > Letter.maxSubjectLength {
-                                        viewModel.subject = String(newValue.prefix(Letter.maxSubjectLength))
-                                    }
-                                }
                             
-                            Text("\(viewModel.subjectRemaining) remaining")
+                            ZStack(alignment: .leading) {
+                                if viewModel.subject.isEmpty {
+                                    Text("A note about...")
+                                        .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
+                                        .foregroundColor(Theme.Colors.textSecondary.opacity(0.5))
+                                        .padding(.vertical, Theme.Spacing.xSmall)
+                                }
+                                
+                                TextField("", text: $viewModel.subject)
+                                    .font(.system(size: Theme.Typography.body, weight: Theme.Typography.medium))
+                                    .foregroundColor(Theme.Colors.textPrimary)
+                                    .focused($focusedField, equals: .subject)
+                                    .padding(.vertical, Theme.Spacing.xSmall)
+                                    .onChange(of: viewModel.subject) { _, newValue in
+                                        if newValue.count > Letter.maxSubjectLength {
+                                            viewModel.subject = String(newValue.prefix(Letter.maxSubjectLength))
+                                        }
+                                    }
+                            }
+                            
+                            Text("\(viewModel.subjectRemaining) characters remaining")
                                 .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
                                 .foregroundColor(Theme.Colors.textSecondary)
                         }
@@ -50,24 +60,34 @@ struct ComposeLetterView: View {
                             .background(Theme.Colors.textSecondary.opacity(0.2))
                         
                         // Letter body
-                        VStack(alignment: .leading, spacing: Theme.Spacing.xxSmall) {
-                            Text("Your message")
-                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.medium))
-                                .foregroundColor(Theme.Colors.textSecondary)
-                            
-                            TextEditor(text: $viewModel.body)
-                                .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xSmall) {
+                            Text("Your message to future self")
+                                .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
                                 .foregroundColor(Theme.Colors.textPrimary)
-                                .scrollContentBackground(.hidden)
-                                .frame(minHeight: 200)
-                                .focused($focusedField, equals: .body)
-                                .onChange(of: viewModel.body) { _, newValue in
-                                    if newValue.count > Letter.maxBodyLength {
-                                        viewModel.body = String(newValue.prefix(Letter.maxBodyLength))
-                                    }
-                                }
                             
-                            Text("\(viewModel.bodyRemaining) remaining")
+                            ZStack(alignment: .topLeading) {
+                                if viewModel.body.isEmpty {
+                                    Text("Dear Future Me,\n\nWrite your thoughts here...")
+                                        .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
+                                        .foregroundColor(Theme.Colors.textSecondary.opacity(0.5))
+                                        .padding(.horizontal, 5)
+                                        .padding(.vertical, 8)
+                                }
+                                
+                                TextEditor(text: $viewModel.body)
+                                    .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
+                                    .foregroundColor(Theme.Colors.textPrimary)
+                                    .scrollContentBackground(.hidden)
+                                    .frame(minHeight: 200)
+                                    .focused($focusedField, equals: .body)
+                                    .onChange(of: viewModel.body) { _, newValue in
+                                        if newValue.count > Letter.maxBodyLength {
+                                            viewModel.body = String(newValue.prefix(Letter.maxBodyLength))
+                                        }
+                                    }
+                            }
+                            
+                            Text("\(viewModel.bodyRemaining) characters remaining")
                                 .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
                                 .foregroundColor(viewModel.bodyRemaining < 100 ? .orange : Theme.Colors.textSecondary)
                         }
