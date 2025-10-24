@@ -37,6 +37,9 @@ struct LetterInboxView: View {
             }
             .navigationTitle("Mental Mailbox")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color.white.opacity(0.01), for: .navigationBar)
+            .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
