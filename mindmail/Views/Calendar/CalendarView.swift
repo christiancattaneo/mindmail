@@ -244,12 +244,16 @@ struct CalendarView: View {
     // MARK: - Actions
     
     private func handleDateTap(_ date: Date) {
+        print("🗓️ [CalendarView] Date tapped: \(date)")
+        print("📝 [CalendarView] Entry exists: \(viewModel.entry(for: date) != nil)")
+        
         // Haptic feedback
         let generator = UIImpactFeedbackGenerator(style: .light)
         generator.impactOccurred()
         
         withAnimation(Theme.Animation.spring) {
             let entry = viewModel.selectDate(date)
+            print("✅ [CalendarView] Calling onDateSelected with date: \(date), entry: \(entry != nil)")
             onDateSelected(date, entry)
         }
     }

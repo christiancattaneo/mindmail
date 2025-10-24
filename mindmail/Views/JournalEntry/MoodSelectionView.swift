@@ -22,9 +22,13 @@ struct MoodSelectionView: View {
                         mood: mood,
                         isSelected: selectedMood == mood
                     ) {
+                        print("😊 [MoodSelectionView] Mood selected: \(mood.label)")
+                        
                         withAnimation(Theme.Animation.spring) {
                             selectedMood = mood
                         }
+                        
+                        print("😊 [MoodSelectionView] selectedMood updated to: \(String(describing: selectedMood))")
                         
                         // Haptic feedback
                         let generator = UIImpactFeedbackGenerator(style: .medium)

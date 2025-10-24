@@ -17,8 +17,10 @@ struct JournalEntryFlowView: View {
     let onComplete: () -> Void
     
     init(date: Date, onComplete: @escaping () -> Void) {
+        print("🎨 [JournalEntryFlowView] INIT called for date: \(date)")
         self._viewModel = State(initialValue: JournalEntryViewModel(date: date))
         self.onComplete = onComplete
+        print("🎨 [JournalEntryFlowView] INIT complete")
     }
     
     var body: some View {
@@ -76,6 +78,12 @@ struct JournalEntryFlowView: View {
             }
         }
         .animation(Theme.Animation.smooth, value: viewModel.currentStep)
+        .onAppear {
+            print("👀 [JournalEntryFlowView] View appeared - currentStep: \(viewModel.currentStep)")
+        }
+        .onChange(of: viewModel.currentStep) { oldStep, newStep in
+            print("🔄 [JournalEntryFlowView] Step changed from \(oldStep) to \(newStep)")
+        }
     }
     
     // MARK: - Header
@@ -225,15 +233,19 @@ struct JournalEntryFlowView: View {
     }
     
     private func handleNext() {
+        print("➡️ [JournalEntryFlowView] handleNext - current step: \(viewModel.currentStep)")
+        
         // Haptic feedback
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
         
         isTextFieldFocused = false
         
+        print("➡️ [JournalEntryFlowView] Moving to next step...")
         withAnimation(Theme.Animation.spring) {
             viewModel.moveToNextStep()
         }
+        print("➡️ [JournalEntryFlowView] New step: \(viewModel.currentStep)")
         
         // Auto-focus next text field
         if viewModel.currentStep != .mood {

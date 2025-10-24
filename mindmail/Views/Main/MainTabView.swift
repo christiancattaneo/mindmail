@@ -19,11 +19,8 @@ struct MainTabView: View {
         TabView(selection: $selectedTab) {
             // Reflect Tab (Calendar + Journal)
             NavigationStack {
-                CalendarView(onDateSelected: { date, entry in
-                    selectedDate = date
-                    showJournalEntry = true
-                })
-                .id(refreshCalendar)
+                CalendarView(onDateSelected: handleDateSelection)
+                    .id(refreshCalendar)
             }
             .tabItem {
                 Label("Reflect", systemImage: selectedTab == 0 ? "calendar.circle.fill" : "calendar.circle")
@@ -38,19 +35,43 @@ struct MainTabView: View {
                 .tag(1)
         }
         .tint(Theme.Colors.lavenderDark)
-        .sheet(isPresented: $showJournalEntry) {
-            refreshCalendar.toggle()
-        } content: {
-            if let date = selectedDate {
-                JournalEntryFlowView(date: date) {
-                    showJournalEntry = false
+        .sheet(isPresented: $showJournalEntry, onDismiss: handleSheetDismiss) {
+            Group {
+                if let date = selectedDate {
+                    JournalEntryFlowView(date: date, onComplete: handleJournalComplete)
+                } else {
+                    Text("Error: No date selected")
+                        .foregroundColor(.red)
                 }
             }
+            .onAppear {
+                print("🎬 [MainTabView] Sheet appeared - selectedDate: \(String(describing: selectedDate))")
+            }
         }
+    }
+    
+    // MARK: - Actions
+    
+    private func handleDateSelection(date: Date, entry: JournalEntry?) {
+        print("📲 [MainTabView] Date selected: \(date), hasEntry: \(entry != nil)")
+        selectedDate = date
+        showJournalEntry = true
+        print("📲 [MainTabView] State updated - showing sheet")
+    }
+    
+    private func handleSheetDismiss() {
+        print("🚪 [MainTabView] Sheet dismissed, refreshing calendar")
+        refreshCalendar.toggle()
+    }
+    
+    private func handleJournalComplete() {
+        print("🏁 [MainTabView] Journal entry completed")
+        showJournalEntry = false
     }
 }
 
 #Preview {
     MainTabView()
 }
+
 

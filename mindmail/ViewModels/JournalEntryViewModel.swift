@@ -67,16 +67,20 @@ class JournalEntryViewModel {
     
     @MainActor
     private func loadExistingEntry() async {
+        print("💾 [JournalEntryViewModel] Loading existing entry for date: \(date)")
         do {
             if let entry = try storage.loadJournalEntry(for: date) {
+                print("💾 [JournalEntryViewModel] Found existing entry - mood: \(entry.mood.label)")
                 selectedMood = entry.mood
                 struggle = entry.struggle
                 gratitude = entry.gratitude
                 memory = entry.memory
                 lookingForward = entry.lookingForward
+            } else {
+                print("💾 [JournalEntryViewModel] No existing entry found - starting fresh")
             }
         } catch {
-            // Silent fail - entry just starts empty
+            print("❌ [JournalEntryViewModel] Error loading entry: \(error)")
         }
     }
     
@@ -98,10 +102,18 @@ class JournalEntryViewModel {
     }
     
     func moveToNextStep() {
-        guard canMoveToNextStep() else { return }
+        print("🚶 [JournalEntryViewModel] moveToNextStep called - current: \(currentStep.rawValue)")
+        guard canMoveToNextStep() else {
+            print("⚠️ [JournalEntryViewModel] Cannot move - validation failed")
+            return
+        }
         
         if let nextStep = Step(rawValue: currentStep.rawValue + 1) {
+            print("🚶 [JournalEntryViewModel] Moving to step: \(nextStep.rawValue)")
             currentStep = nextStep
+            print("✅ [JournalEntryViewModel] Now at step: \(currentStep.rawValue)")
+        } else {
+            print("⚠️ [JournalEntryViewModel] No next step available")
         }
     }
     
