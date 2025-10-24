@@ -12,12 +12,14 @@ import SwiftUI
 struct MainTabView: View {
     @State private var selectedTab = 0
     @State private var selectedDate: Date?
+    @State private var selectedEntry: JournalEntry?
+    @State private var showEditMode = false
     @State private var refreshCalendar = false
     
     private var showJournalEntry: Binding<Bool> {
         Binding(
             get: { selectedDate != nil },
-            set: { if !$0 { selectedDate = nil } }
+            set: { if !$0 { selectedDate = nil; selectedEntry = nil; showEditMode = false } }
         )
     }
     
@@ -43,10 +45,26 @@ struct MainTabView: View {
         .tint(Theme.Colors.lavenderDark)
         .sheet(isPresented: showJournalEntry, onDismiss: handleSheetDismiss) {
             if let date = selectedDate {
-                JournalEntryFlowView(date: date, onComplete: handleJournalComplete)
+                if showEditMode {
+                    // Edit mode (new entry or editing)
+                    JournalEntryFlowView(date: date, onComplete: handleJournalComplete)
+                        .onAppear {
+                            print("✅ [MainTabView] JournalEntryFlowView appeared (edit mode)")
+                        }
+                } else if let entry = selectedEntry {
+                    // Display mode (viewing existing entry)
+                    JournalEntryDisplayView(
+                        entry: entry,
+                        onEdit: {
+                            print("✏️ [MainTabView] Switching to edit mode")
+                            showEditMode = true
+                        },
+                        onClose: handleJournalComplete
+                    )
                     .onAppear {
-                        print("✅ [MainTabView] JournalEntryFlowView appeared with date: \(date)")
+                        print("👁️ [MainTabView] JournalEntryDisplayView appeared (view mode)")
                     }
+                }
             }
         }
     }
@@ -56,7 +74,9 @@ struct MainTabView: View {
     private func handleDateSelection(date: Date, entry: JournalEntry?) {
         print("📲 [MainTabView] Date selected: \(date), hasEntry: \(entry != nil)")
         selectedDate = date
-        print("📲 [MainTabView] selectedDate is now: \(String(describing: selectedDate))")
+        selectedEntry = entry
+        showEditMode = (entry == nil) // Edit mode if no entry, display mode if has entry
+        print("📲 [MainTabView] selectedDate: \(String(describing: selectedDate)), editMode: \(showEditMode)")
     }
     
     private func handleSheetDismiss() {
