@@ -292,6 +292,15 @@ struct JournalEntryDisplayView: View {
                     .background(Theme.Colors.cardBackground)
                     .cornerRadius(Theme.CornerRadius.large)
                     .padding(.horizontal)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") {
+                                editingField = nil
+                            }
+                            .foregroundColor(Theme.Colors.lavenderDark)
+                        }
+                    }
                 
                 Text("\(charactersRemaining(for: field)) characters remaining")
                     .font(.system(size: Theme.Typography.caption))

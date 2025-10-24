@@ -75,6 +75,15 @@ struct PersonalizationView: View {
                         .onSubmit {
                             attemptContinue()
                         }
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") {
+                                    isTextFieldFocused = false
+                                }
+                                .foregroundColor(Theme.Colors.lavenderDark)
+                            }
+                        }
                     
                     // Character count
                     HStack {

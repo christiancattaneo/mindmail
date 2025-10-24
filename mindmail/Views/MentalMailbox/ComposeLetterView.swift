@@ -166,6 +166,15 @@ struct ComposeLetterView: View {
                         .scrollContentBackground(.hidden)
                         .frame(minHeight: 180)
                         .focused($focusedField, equals: .body)
+                        .toolbar {
+                            ToolbarItemGroup(placement: .keyboard) {
+                                Spacer()
+                                Button("Done") {
+                                    focusedField = nil
+                                }
+                                .foregroundColor(Theme.Colors.lavenderDark)
+                            }
+                        }
                 }
                 
                 Text("\(viewModel.bodyRemaining) characters left")

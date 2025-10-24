@@ -43,6 +43,15 @@ struct JournalTextInputView: View {
                     .scrollContentBackground(.hidden)
                     .focused($isFocused)
                     .frame(minHeight: 120)
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button("Done") {
+                                isFocused = false
+                            }
+                            .foregroundColor(Theme.Colors.lavenderDark)
+                        }
+                    }
                     .onChange(of: text) { _, newValue in
                         // Enforce max length
                         if newValue.count > maxLength {
