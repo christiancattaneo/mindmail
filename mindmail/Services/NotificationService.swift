@@ -55,8 +55,13 @@ class NotificationService {
     /// - Parameter letter: The letter to schedule notification for
     /// - Throws: LetterError if scheduling fails
     func scheduleLetter (_ letter: Letter) throws {
+        print("🔔 [NotificationService] scheduleLetter() called for ID: \(letter.id)")
+        print("🔔 [NotificationService] Scheduled date: \(letter.scheduledDate)")
+        print("🔔 [NotificationService] Time from now: \(letter.scheduledDate.timeIntervalSinceNow) seconds")
+        
         // Safety check: Ensure date is in the future (already validated at model level)
         guard letter.scheduledDate.timeIntervalSinceNow >= Letter.minScheduleDelay else {
+            print("❌ [NotificationService] Date is not in future enough!")
             throw LetterError.scheduledDateMustBeInFuture
         }
         
@@ -67,6 +72,8 @@ class NotificationService {
         content.sound = .default
         content.userInfo = ["letterId": letter.id.uuidString]
         
+        print("🔔 [NotificationService] Content created - Title: '\(content.title)'")
+        
         // Create trigger based on recurrence
         let trigger: UNNotificationTrigger
         
@@ -74,11 +81,13 @@ class NotificationService {
         case .once:
             // One-time notification
             let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: letter.scheduledDate)
+            print("🔔 [NotificationService] Creating ONE-TIME trigger for: \(components)")
             trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
             
         case .daily:
             // Daily repeating notification at same time each day
             let components = Calendar.current.dateComponents([.hour, .minute], from: letter.scheduledDate)
+            print("🔔 [NotificationService] Creating DAILY trigger for: \(components)")
             trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         }
         
@@ -89,10 +98,25 @@ class NotificationService {
             trigger: trigger
         )
         
+        print("🔔 [NotificationService] Scheduling notification with ID: \(request.identifier)")
+        
         // Schedule notification
         center.add(request) { error in
             if let error = error {
-                print("Error scheduling notification: \(error.localizedDescription)")
+                print("❌ [NotificationService] Error scheduling: \(error.localizedDescription)")
+            } else {
+                print("✅ [NotificationService] Notification scheduled successfully!")
+                
+                // Log pending notifications
+                Task {
+                    let pending = await self.center.pendingNotificationRequests()
+                    print("📋 [NotificationService] Total pending notifications: \(pending.count)")
+                    for req in pending {
+                        if let trigger = req.trigger as? UNCalendarNotificationTrigger {
+                            print("📋 [NotificationService] - ID: \(req.identifier), next: \(String(describing: trigger.nextTriggerDate()))")
+                        }
+                    }
+                }
             }
         }
     }

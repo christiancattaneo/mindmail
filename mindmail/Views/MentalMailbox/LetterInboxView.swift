@@ -14,6 +14,7 @@ struct LetterInboxView: View {
     @State private var showCompose = false
     @State private var selectedLetter: Letter?
     @State private var emojiOffset: CGFloat = 0
+    @State private var checkTimer: Timer?
     
     private let storage = StorageService.shared
     
@@ -52,6 +53,11 @@ struct LetterInboxView: View {
             print("👀 [LetterInboxView] View appeared")
             LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
             loadLetters()
+            startPeriodicCheck()
+        }
+        .onDisappear {
+            print("👋 [LetterInboxView] View disappeared, stopping timer")
+            stopPeriodicCheck()
         }
         .refreshable {
             LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
@@ -207,6 +213,23 @@ struct LetterInboxView: View {
             print("Error loading letters: \(error.localizedDescription)")
             letters = []
         }
+    }
+    
+    // MARK: - Periodic Check
+    
+    private func startPeriodicCheck() {
+        print("⏰ [LetterInboxView] Starting periodic check (every 10 seconds)")
+        
+        // Check every 10 seconds while inbox is visible
+        checkTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
+            print("⏰ [LetterInboxView] Timer fired - checking for past-due letters")
+            LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+        }
+    }
+    
+    private func stopPeriodicCheck() {
+        checkTimer?.invalidate()
+        checkTimer = nil
     }
     
     // MARK: - Actions
