@@ -12,6 +12,7 @@ import SwiftUI
 struct CalendarView: View {
     @State private var viewModel = CalendarViewModel()
     @State private var userName: String = ""
+    @State private var showMonthYearPicker = false
     let onDateSelected: (Date, JournalEntry?) -> Void
     
     private let columns = Array(repeating: GridItem(.flexible(), spacing: Theme.Spacing.xSmall), count: 7)
@@ -37,6 +38,9 @@ struct CalendarView: View {
         .themeBackground()
         .onAppear {
             loadUserName()
+        }
+        .sheet(isPresented: $showMonthYearPicker) {
+            monthYearPickerView
         }
     }
     
@@ -78,6 +82,48 @@ struct CalendarView: View {
         }
     }
     
+    // MARK: - Month/Year Picker
+    
+    private var monthYearPickerView: some View {
+        NavigationStack {
+            VStack(spacing: Theme.Spacing.large) {
+                DatePicker(
+                    "Select Month & Year",
+                    selection: $viewModel.currentMonth,
+                    displayedComponents: [.date]
+                )
+                .datePickerStyle(.graphical)
+                .tint(Theme.Colors.lavenderDark)
+                .padding()
+                .background(Color.white)
+                .cornerRadius(Theme.CornerRadius.large)
+                .padding(.horizontal)
+                
+                Button("Done") {
+                    showMonthYearPicker = false
+                }
+                .font(.system(size: Theme.Typography.headline, weight: Theme.Typography.semibold))
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .frame(height: Theme.TouchTarget.comfortable)
+                .background(
+                    LinearGradient(
+                        colors: [Theme.Colors.lavenderDark, Theme.Colors.softPurple],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .cornerRadius(Theme.CornerRadius.large)
+                .padding(.horizontal)
+            }
+            .padding(.vertical, Theme.Spacing.large)
+            .background(Theme.Colors.softLavender)
+            .navigationTitle("Select Month & Year")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+        .presentationDetents([.medium])
+    }
+    
     // MARK: - Month Header
     
     private var monthHeader: some View {
@@ -102,37 +148,44 @@ struct CalendarView: View {
             
             Spacer()
             
-            // Month and year with card background
-            VStack(spacing: Theme.Spacing.xxxSmall) {
-                Text(viewModel.monthYearString)
-                    .font(.system(size: Theme.Typography.title2, weight: Theme.Typography.bold))
-                    .foregroundColor(Theme.Colors.textPrimary)
-                
-                // Today button
-                Button(action: {
-                    withAnimation(Theme.Animation.spring) {
-                        viewModel.moveToToday()
-                    }
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "star.circle.fill")
-                            .font(.system(size: 10))
-                        Text("Today")
-                            .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.semibold))
-                    }
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
-                            startPoint: .leading,
-                            endPoint: .trailing
+            // Month and year - tappable to select
+            Button(action: {
+                showMonthYearPicker = true
+            }) {
+                VStack(spacing: Theme.Spacing.xxxSmall) {
+                    Text(viewModel.monthYearString)
+                        .font(.system(size: Theme.Typography.title3, weight: Theme.Typography.bold))
+                        .foregroundColor(Theme.Colors.textPrimary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    
+                    // Today button
+                    Button(action: {
+                        withAnimation(Theme.Animation.spring) {
+                            viewModel.moveToToday()
+                        }
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "star.circle.fill")
+                                .font(.system(size: 10))
+                            Text("Today")
+                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.semibold))
+                        }
+                        .foregroundStyle(
+                            LinearGradient(
+                                colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
                         )
-                    )
-                    .padding(.horizontal, Theme.Spacing.small)
-                    .padding(.vertical, Theme.Spacing.xxxSmall)
-                    .background(Theme.Colors.lavender.opacity(0.3))
-                    .cornerRadius(Theme.CornerRadius.small)
+                        .padding(.horizontal, Theme.Spacing.small)
+                        .padding(.vertical, Theme.Spacing.xxxSmall)
+                        .background(Theme.Colors.lavender.opacity(0.3))
+                        .cornerRadius(Theme.CornerRadius.small)
+                    }
                 }
             }
+            .buttonStyle(PlainButtonStyle())
             
             Spacer()
             
@@ -269,6 +322,8 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
+    @State private var floatOffset: CGFloat = 0
+    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
@@ -280,7 +335,7 @@ struct DayCell: View {
             VStack(spacing: Theme.Spacing.xxxSmall) {
                 // Day number
                 Text(dayNumber)
-                    .font(.system(size: Theme.Typography.subheadline, weight: isToday ? Theme.Typography.bold : Theme.Typography.medium))
+                    .font(.system(size: Theme.Typography.subheadline, weight: (isToday || isSelected) ? Theme.Typography.bold : Theme.Typography.medium))
                     .foregroundColor(isFuture ? Theme.Colors.textSecondary.opacity(0.5) : Theme.Colors.textPrimary)
                 
                 // Mood emoji or indicator
@@ -300,20 +355,46 @@ struct DayCell: View {
                     .fill(backgroundColor)
             )
             .overlay(
-                // Beautiful border for today and selected (no blur, no bouncing!)
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
-                    .strokeBorder(borderColor, lineWidth: isToday ? 2.5 : isSelected ? 2 : 0)
+                    .strokeBorder(borderColor, lineWidth: (isToday || isSelected) ? 2.5 : 0)
             )
             .shadow(
-                // Subtle shadow for today to make it stand out
-                color: isToday ? Theme.Colors.cherryBlossomPink.opacity(0.3) : Color.clear,
-                radius: isToday ? 6 : 0,
+                color: (isToday || isSelected) ? Theme.Colors.cherryBlossomPink.opacity(0.3) : Color.clear,
+                radius: (isToday || isSelected) ? 6 : 0,
                 x: 0,
                 y: 0
             )
+            .offset(y: (isToday || isSelected) ? floatOffset : 0)
+            .onAppear {
+                if isToday || isSelected {
+                    startFloating()
+                }
+            }
+            .onChange(of: isSelected) { _, newValue in
+                if newValue {
+                    startFloating()
+                } else {
+                    stopFloating()
+                }
+            }
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isFuture)
+    }
+    
+    private func startFloating() {
+        withAnimation(
+            .easeInOut(duration: 2.0)
+            .repeatForever(autoreverses: true)
+        ) {
+            floatOffset = -3
+        }
+    }
+    
+    private func stopFloating() {
+        withAnimation(.easeOut(duration: 0.3)) {
+            floatOffset = 0
+        }
     }
     
     private var backgroundColor: Color {

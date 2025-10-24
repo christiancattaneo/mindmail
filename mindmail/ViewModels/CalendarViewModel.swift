@@ -16,7 +16,12 @@ class CalendarViewModel {
     private let calendar = Calendar.current
     
     // State
-    var currentMonth: Date
+    var currentMonth: Date {
+        didSet {
+            // When month changes, reload calendar
+            print("📅 [CalendarViewModel] Month changed to: \(monthYearString)")
+        }
+    }
     var selectedDate: Date?
     var journalEntries: [String: JournalEntry] = [:] // dateKey: entry
     
