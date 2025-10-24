@@ -18,10 +18,13 @@ struct LetterInboxView: View {
     private let storage = StorageService.shared
     
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Theme.Colors.background
-                    .ignoresSafeArea()
+        ZStack {
+            Theme.Colors.background
+                .ignoresSafeArea()
+            
+            VStack(spacing: Theme.Spacing.medium) {
+                // Custom header matching calendar style
+                customHeader
                 
                 if letters.isEmpty {
                     emptyState
@@ -31,57 +34,69 @@ struct LetterInboxView: View {
                             lettersSection(title: "Scheduled", letters: scheduledLetters)
                             lettersSection(title: "Received", letters: deliveredLetters)
                         }
-                        .padding(Theme.Spacing.medium)
+                        .padding(.horizontal, Theme.Spacing.medium)
                     }
                 }
             }
-            .navigationTitle("Mental Mailbox")
-            .navigationBarTitleDisplayMode(.large)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarBackground(Color.white.opacity(0.01), for: .navigationBar)
-            .preferredColorScheme(.light)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: {
-                        showCompose = true
-                    }) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                    }
-                }
+            .padding(.top, Theme.Spacing.medium)
+        }
+        .sheet(isPresented: $showCompose) {
+            loadLetters()
+        } content: {
+            ComposeLetterView()
+        }
+        .sheet(item: $selectedLetter) { letter in
+            LetterReadingView(letter: letter)
+        }
+        .onAppear {
+            print("👀 [LetterInboxView] View appeared")
+            LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+            loadLetters()
+        }
+        .refreshable {
+            LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+            loadLetters()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .letterDelivered)) { _ in
+            print("📬 [LetterInboxView] Letter delivered notification received - reloading")
+            loadLetters()
+        }
+    }
+    
+    // MARK: - Custom Header
+    
+    private var customHeader: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: Theme.Spacing.xxxSmall) {
+                Text("Mental Mailbox")
+                    .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
+                    .foregroundColor(Theme.Colors.textPrimary)
+                
+                Text("Letters from your past self")
+                    .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
+                    .foregroundColor(Theme.Colors.textSecondary)
             }
-            .sheet(isPresented: $showCompose) {
-                loadLetters() // Reload when sheet dismisses
-            } content: {
-                ComposeLetterView()
-            }
-            .sheet(item: $selectedLetter) { letter in
-                LetterReadingView(letter: letter)
-            }
-            .onAppear {
-                print("👀 [LetterInboxView] View appeared")
-                // Check for past-due letters first
-                LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
-                // Then load all letters
-                loadLetters()
-            }
-            .refreshable {
-                // Check for past-due letters when user pulls to refresh
-                LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
-                loadLetters()
-            }
-            .onReceive(NotificationCenter.default.publisher(for: .letterDelivered)) { _ in
-                print("📬 [LetterInboxView] Letter delivered notification received - reloading")
-                loadLetters()
+            
+            Spacer()
+            
+            // Add button
+            Button(action: {
+                showCompose = true
+            }) {
+                Image(systemName: "plus.circle.fill")
+                    .font(.system(size: 32))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        )
+                    )
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Theme.Spacing.medium)
+        .padding(.bottom, Theme.Spacing.small)
     }
     
     // MARK: - Empty State
