@@ -23,6 +23,14 @@ struct JournalEntryFlowView: View {
     
     var body: some View {
         ZStack {
+            // Background
+            LinearGradient(
+                colors: [Theme.Colors.softLavender, Theme.Colors.creamIvory],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .ignoresSafeArea()
+            
             // Main content
             VStack(spacing: 0) {
                 // Header with progress
@@ -60,7 +68,6 @@ struct JournalEntryFlowView: View {
                 // Navigation buttons
                 navigationButtons
             }
-            .themeBackground()
             
             // Celebration overlay
             if showCelebration {

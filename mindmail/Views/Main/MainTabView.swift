@@ -13,6 +13,7 @@ struct MainTabView: View {
     @State private var selectedTab = 0
     @State private var showJournalEntry = false
     @State private var selectedDate: Date?
+    @State private var refreshCalendar = false
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -22,6 +23,7 @@ struct MainTabView: View {
                     selectedDate = date
                     showJournalEntry = true
                 })
+                .id(refreshCalendar) // Force refresh when this changes
             }
             .tabItem {
                 Label("Reflect", systemImage: selectedTab == 0 ? "calendar.circle.fill" : "calendar.circle")
@@ -37,10 +39,12 @@ struct MainTabView: View {
         }
         .tint(Theme.Colors.lavenderDark)
         .sheet(isPresented: $showJournalEntry) {
+            // Reload calendar when sheet dismisses
+            refreshCalendar.toggle()
+        } content: {
             if let date = selectedDate {
                 JournalEntryFlowView(date: date) {
                     showJournalEntry = false
-                    // Reload calendar to show new entry
                 }
             }
         }
