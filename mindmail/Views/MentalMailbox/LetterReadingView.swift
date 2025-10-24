@@ -12,6 +12,7 @@ import SwiftUI
 struct LetterReadingView: View {
     let letter: Letter
     @Environment(\.dismiss) private var dismiss
+    @State private var showDeleteConfirmation = false
     
     private var formattedDate: String {
         let formatter = DateFormatter()
@@ -28,38 +29,45 @@ struct LetterReadingView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Theme.Spacing.large) {
-                    // Header
-                    VStack(alignment: .leading, spacing: Theme.Spacing.xSmall) {
-                        if let subject = letter.subject {
-                            Text(subject)
-                                .font(.system(size: Theme.Typography.title, weight: Theme.Typography.bold))
-                                .foregroundColor(Theme.Colors.textPrimary)
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: Theme.Spacing.large) {
+                        // Header
+                        VStack(alignment: .leading, spacing: Theme.Spacing.xSmall) {
+                            if let subject = letter.subject {
+                                Text(subject)
+                                    .font(.system(size: Theme.Typography.title, weight: Theme.Typography.bold))
+                                    .foregroundColor(Theme.Colors.textPrimary)
+                            }
+                            
+                            Text("Written on \(createdDate)")
+                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
+                                .foregroundColor(Theme.Colors.textSecondary)
+                            
+                            Text("Scheduled for \(formattedDate)")
+                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
+                                .foregroundColor(Theme.Colors.textSecondary)
                         }
                         
-                        Text("Written on \(createdDate)")
-                            .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
-                            .foregroundColor(Theme.Colors.textSecondary)
+                        Divider()
+                            .background(Theme.Colors.textSecondary.opacity(0.2))
                         
-                        Text("Scheduled for \(formattedDate)")
-                            .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
-                            .foregroundColor(Theme.Colors.textSecondary)
+                        // Letter body
+                        Text(letter.body)
+                            .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
+                            .foregroundColor(Theme.Colors.textPrimary)
+                            .lineSpacing(8)
+                        
+                        Spacer(minLength: Theme.Spacing.xxLarge)
                     }
-                    
-                    Divider()
-                        .background(Theme.Colors.textSecondary.opacity(0.2))
-                    
-                    // Letter body
-                    Text(letter.body)
-                        .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
-                        .foregroundColor(Theme.Colors.textPrimary)
-                        .lineSpacing(8)
-                    
-                    Spacer(minLength: Theme.Spacing.xxLarge)
+                    .padding(Theme.Spacing.large)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
-                .padding(Theme.Spacing.large)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // Delete button (only for scheduled letters)
+                if !letter.isDelivered {
+                    deleteButton
+                }
             }
             .background(Theme.Colors.creamIvory)
             .navigationBarTitleDisplayMode(.inline)
@@ -74,6 +82,55 @@ struct LetterReadingView: View {
                     }
                 }
             }
+            .alert("Delete Letter?", isPresented: $showDeleteConfirmation) {
+                Button("Cancel", role: .cancel) {}
+                Button("Delete", role: .destructive) {
+                    deleteLetter()
+                }
+            } message: {
+                Text("This letter will be permanently deleted and won't be delivered.")
+            }
+        }
+    }
+    
+    // MARK: - Delete Button
+    
+    private var deleteButton: some View {
+        Button(action: {
+            showDeleteConfirmation = true
+        }) {
+            HStack {
+                Image(systemName: "trash")
+                    .font(.system(size: Theme.Typography.body, weight: Theme.Typography.semibold))
+                Text("Delete Letter")
+                    .font(.system(size: Theme.Typography.headline, weight: Theme.Typography.semibold))
+            }
+            .foregroundColor(.white)
+            .frame(maxWidth: .infinity)
+            .frame(height: Theme.TouchTarget.comfortable)
+            .background(Color.red.opacity(0.9))
+            .cornerRadius(0)
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func deleteLetter() {
+        do {
+            try StorageService.shared.deleteLetter(letter.id)
+            
+            // Cancel notification if scheduled
+            NotificationService.shared.cancelLetter(letter.id)
+            
+            // Haptic feedback
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+            
+            dismiss()
+        } catch {
+            // Error haptic
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
         }
     }
 }
