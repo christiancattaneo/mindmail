@@ -222,8 +222,10 @@ struct LetterInboxView: View {
         
         // Check every 10 seconds while inbox is visible
         checkTimer = Timer.scheduledTimer(withTimeInterval: 10.0, repeats: true) { _ in
-            print("⏰ [LetterInboxView] Timer fired - checking for past-due letters")
-            LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+            Task { @MainActor in
+                print("⏰ [LetterInboxView] Timer fired - checking for past-due letters")
+                LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+            }
         }
     }
     
