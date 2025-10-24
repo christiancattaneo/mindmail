@@ -19,11 +19,11 @@ struct Letter: Codable, Identifiable, Equatable {
     let isDelivered: Bool
     let deliveredAt: Date?
     
-    /// Maximum length for letter subject
-    static let maxSubjectLength = 100
+    /// Maximum length for letter subject (focused and concise)
+    static let maxSubjectLength = 50
     
-    /// Maximum length for letter body (reasonable limit for emotional wellness use case)
-    static let maxBodyLength = 2000
+    /// Maximum length for letter body (heartfelt but focused message)
+    static let maxBodyLength = 500
     
     /// Minimum length for letter body
     static let minBodyLength = 1

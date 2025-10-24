@@ -48,7 +48,7 @@ struct LetterModelTests {
             subject: "   ",
             body: "Body text",
             scheduledDate: futureDate,
-            recurrence: .weekly
+            recurrence: .once
         )
         
         #expect(letter.subject == nil) // Empty subject should be treated as nil
@@ -56,7 +56,7 @@ struct LetterModelTests {
     
     @Test func testMaxLengthSubject() async throws {
         let futureDate = Date().addingTimeInterval(3600)
-        let maxSubject = String(repeating: "A", count: 100)
+        let maxSubject = String(repeating: "A", count: 50)
         let letter = try Letter(
             subject: maxSubject,
             body: "Body",
@@ -64,12 +64,12 @@ struct LetterModelTests {
             recurrence: .once
         )
         
-        #expect(letter.subject?.count == 100)
+        #expect(letter.subject?.count == 50)
     }
     
     @Test func testMaxLengthBody() async throws {
         let futureDate = Date().addingTimeInterval(3600)
-        let maxBody = String(repeating: "A", count: 2000)
+        let maxBody = String(repeating: "A", count: 500)
         let letter = try Letter(
             subject: "Test",
             body: maxBody,
@@ -77,7 +77,7 @@ struct LetterModelTests {
             recurrence: .once
         )
         
-        #expect(letter.body.count == 2000)
+        #expect(letter.body.count == 500)
     }
     
     // MARK: - Invalid Letter Creation (Should Throw)
@@ -108,7 +108,7 @@ struct LetterModelTests {
     
     @Test func testSubjectTooLongThrows() async throws {
         let futureDate = Date().addingTimeInterval(3600)
-        let tooLongSubject = String(repeating: "A", count: 101)
+        let tooLongSubject = String(repeating: "A", count: 51)
         #expect(throws: ValidationError.self) {
             _ = try Letter(
                 subject: tooLongSubject,
@@ -121,7 +121,7 @@ struct LetterModelTests {
     
     @Test func testBodyTooLongThrows() async throws {
         let futureDate = Date().addingTimeInterval(3600)
-        let tooLongBody = String(repeating: "A", count: 2001)
+        let tooLongBody = String(repeating: "A", count: 501)
         #expect(throws: ValidationError.self) {
             _ = try Letter(
                 subject: "Subject",
@@ -240,7 +240,7 @@ struct LetterModelTests {
             subject: "Test Subject",
             body: "Test Body",
             scheduledDate: futureDate,
-            recurrence: .weekly
+            recurrence: .daily
         )
         
         let encoder = JSONEncoder()

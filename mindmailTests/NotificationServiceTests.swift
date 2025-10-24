@@ -181,13 +181,11 @@ struct NotificationServiceTests {
     // MARK: - Recurrence Pattern Tests
     
     @Test func testRecurrencePatterns() async throws {
-        #expect(RecurrencePattern.once.label == "Only Once")
-        #expect(RecurrencePattern.daily.label == "Daily")
-        #expect(RecurrencePattern.weekly.label == "Weekly")
+        #expect(RecurrencePattern.once.label == "One Time")
+        #expect(RecurrencePattern.daily.label == "Daily Reminder")
         
         #expect(RecurrencePattern.once.calendarComponent == nil)
         #expect(RecurrencePattern.daily.calendarComponent == .day)
-        #expect(RecurrencePattern.weekly.calendarComponent == .weekOfYear)
     }
     
     // MARK: - Safety Limit Tests
@@ -259,7 +257,7 @@ struct NotificationServiceTests {
             subject: "Persist Test",
             body: "This should persist across app sessions",
             scheduledDate: futureDate,
-            recurrence: .weekly
+            recurrence: .daily
         )
         try storage.saveLetter(letter)
         
@@ -270,7 +268,7 @@ struct NotificationServiceTests {
         #expect(loaded != nil)
         #expect(loaded?.subject == "Persist Test")
         #expect(loaded?.body == "This should persist across app sessions")
-        #expect(loaded?.recurrence == .weekly)
+        #expect(loaded?.recurrence == .daily)
     }
 }
 

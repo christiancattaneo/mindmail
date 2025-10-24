@@ -9,10 +9,10 @@ import Foundation
 
 /// Defines how often a letter should be delivered
 /// Security: Predefined values prevent injection and ensure safe scheduling
+/// Simplified for emotional wellness use case
 enum RecurrencePattern: String, Codable, CaseIterable, Identifiable {
     case once = "once"
     case daily = "daily"
-    case weekly = "weekly"
     
     var id: String { rawValue }
     
@@ -20,11 +20,29 @@ enum RecurrencePattern: String, Codable, CaseIterable, Identifiable {
     var label: String {
         switch self {
         case .once:
-            return "Only Once"
+            return "One Time"
         case .daily:
-            return "Daily"
-        case .weekly:
-            return "Weekly"
+            return "Daily Reminder"
+        }
+    }
+    
+    /// Icon for the recurrence type
+    var icon: String {
+        switch self {
+        case .once:
+            return "envelope.circle.fill"
+        case .daily:
+            return "repeat.circle.fill"
+        }
+    }
+    
+    /// Description of what this means
+    var description: String {
+        switch self {
+        case .once:
+            return "Receive this letter once"
+        case .daily:
+            return "Get this reminder every day"
         }
     }
     
@@ -35,8 +53,6 @@ enum RecurrencePattern: String, Codable, CaseIterable, Identifiable {
             return nil
         case .daily:
             return .day
-        case .weekly:
-            return .weekOfYear
         }
     }
 }

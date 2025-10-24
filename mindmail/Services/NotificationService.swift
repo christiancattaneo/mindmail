@@ -77,13 +77,8 @@ class NotificationService {
             trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
             
         case .daily:
-            // Daily repeating notification
+            // Daily repeating notification at same time each day
             let components = Calendar.current.dateComponents([.hour, .minute], from: letter.scheduledDate)
-            trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
-            
-        case .weekly:
-            // Weekly repeating notification
-            let components = Calendar.current.dateComponents([.weekday, .hour, .minute], from: letter.scheduledDate)
             trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: true)
         }
         
