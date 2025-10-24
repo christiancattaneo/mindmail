@@ -22,11 +22,14 @@ struct Letter: Codable, Identifiable, Equatable {
     /// Maximum length for letter subject (focused and concise)
     static let maxSubjectLength = 50
     
+    /// Minimum length for letter subject (if provided)
+    static let minSubjectLength = 1
+    
     /// Maximum length for letter body (heartfelt but focused message)
     static let maxBodyLength = 500
     
-    /// Minimum length for letter body
-    static let minBodyLength = 1
+    /// Minimum length for letter body (message is required)
+    static let minBodyLength = 0
     
     /// Maximum number of letters that can be scheduled (SAFETY LIMIT - prevent abuse)
     static let maxScheduledLetters = 100
@@ -42,11 +45,14 @@ struct Letter: Codable, Identifiable, Equatable {
     ///   - recurrence: How often to deliver (once, daily, weekly)
     /// - Throws: ValidationError if any input fails validation
     init(subject: String?, body: String, scheduledDate: Date, recurrence: RecurrencePattern) throws {
-        // Validate subject if provided
+        // Validate subject if provided (must have at least 1 char if not empty)
         let validatedSubject: String?
         if let subject = subject {
             let trimmed = subject.trimmingCharacters(in: .whitespacesAndNewlines)
             if !trimmed.isEmpty {
+                guard trimmed.count >= Self.minSubjectLength else {
+                    throw ValidationError.emptyText
+                }
                 guard trimmed.count <= Self.maxSubjectLength else {
                     throw ValidationError.textTooLong(maxLength: Self.maxSubjectLength)
                 }
@@ -58,17 +64,14 @@ struct Letter: Codable, Identifiable, Equatable {
             validatedSubject = nil
         }
         
-        // Validate body
+        // Validate body (can be empty - minimum 0 characters)
         let trimmedBody = body.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedBody.isEmpty else {
-            throw ValidationError.emptyText
-        }
-        guard trimmedBody.count >= Self.minBodyLength else {
-            throw ValidationError.emptyText
-        }
         guard trimmedBody.count <= Self.maxBodyLength else {
             throw ValidationError.textTooLong(maxLength: Self.maxBodyLength)
         }
+        
+        // Allow empty body (user might just want to schedule a reminder)
+        let finalBody = trimmedBody.isEmpty ? "" : Self.sanitizeText(trimmedBody)
         
         // Validate scheduled date is in the future (prevent self-triggering loops)
         guard scheduledDate.timeIntervalSinceNow >= Self.minScheduleDelay else {
@@ -77,7 +80,7 @@ struct Letter: Codable, Identifiable, Equatable {
         
         self.id = UUID()
         self.subject = validatedSubject
-        self.body = Self.sanitizeText(trimmedBody)
+        self.body = finalBody
         self.scheduledDate = scheduledDate
         self.recurrence = recurrence
         self.createdAt = Date()

@@ -132,12 +132,12 @@ enum ValidationUtils {
         return characterCount(subject) <= Letter.maxSubjectLength
     }
     
-    /// Validates letter body
+    /// Validates letter body (can be empty)
     /// - Parameter body: Body to validate
     /// - Returns: true if valid
     static func isValidLetterBody(_ body: String) -> Bool {
         let trimmed = body.trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.count >= Letter.minBodyLength && trimmed.count <= Letter.maxBodyLength
+        return trimmed.count <= Letter.maxBodyLength
     }
     
     // MARK: - Date Validation

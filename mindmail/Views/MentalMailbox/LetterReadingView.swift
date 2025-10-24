@@ -99,18 +99,23 @@ struct LetterReadingView: View {
         Button(action: {
             showDeleteConfirmation = true
         }) {
-            HStack {
-                Image(systemName: "trash")
-                    .font(.system(size: Theme.Typography.body, weight: Theme.Typography.semibold))
-                Text("Delete Letter")
-                    .font(.system(size: Theme.Typography.headline, weight: Theme.Typography.semibold))
+            HStack(spacing: Theme.Spacing.xxSmall) {
+                Image(systemName: "trash.circle")
+                    .font(.system(size: Theme.Typography.footnote))
+                Text("Delete")
+                    .font(.system(size: Theme.Typography.footnote, weight: Theme.Typography.medium))
             }
-            .foregroundColor(.white)
-            .frame(maxWidth: .infinity)
-            .frame(height: Theme.TouchTarget.comfortable)
-            .background(Color.red.opacity(0.9))
-            .cornerRadius(0)
+            .foregroundColor(Theme.Colors.textSecondary)
+            .padding(.horizontal, Theme.Spacing.medium)
+            .padding(.vertical, Theme.Spacing.small)
+            .background(Theme.Colors.cardBackground)
+            .cornerRadius(Theme.CornerRadius.large)
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
+                    .strokeBorder(Theme.Colors.textSecondary.opacity(0.3), lineWidth: 1)
+            )
         }
+        .padding(Theme.Spacing.medium)
     }
     
     // MARK: - Actions

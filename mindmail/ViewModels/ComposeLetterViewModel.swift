@@ -38,7 +38,10 @@ class ComposeLetterViewModel {
     // MARK: - Validation
     
     var isValid: Bool {
-        return ValidationUtils.isValidLetterSubject(subject) &&
+        // Must have either subject or body (or both)
+        let hasContent = !ValidationUtils.isEmpty(subject) || !ValidationUtils.isEmpty(body)
+        return hasContent &&
+               ValidationUtils.isValidLetterSubject(subject) &&
                ValidationUtils.isValidLetterBody(body) &&
                ValidationUtils.isFutureDate(scheduledDate)
     }
