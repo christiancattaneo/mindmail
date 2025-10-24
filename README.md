@@ -196,11 +196,21 @@ xcodebuild test -scheme mindmail -destination 'platform=iOS Simulator,name=iPhon
 
 ## 📝 License
 
-Private project - All rights reserved
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 👤 Author
 
 Christian Cattaneo
+
+## 🤝 Contributing
+
+This is an open source project! Contributions, issues, and feature requests are welcome.
+
+Feel free to check the [issues page](../../issues) if you want to contribute.
+
+## ⭐ Show your support
+
+Give a ⭐️ if this project helped you learn something new!
 
 ---
 
