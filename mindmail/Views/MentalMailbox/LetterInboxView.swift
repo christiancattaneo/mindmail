@@ -108,7 +108,7 @@ struct LetterInboxView: View {
             Text("💌")
                 .font(.system(size: 80))
                 .offset(y: emojiOffset)
-                .onAppear {
+                .task {
                     withAnimation(
                         .easeInOut(duration: 2.5)
                         .repeatForever(autoreverses: true)
