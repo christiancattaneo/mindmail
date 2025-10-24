@@ -10,6 +10,7 @@ import SwiftUI
 
 /// Manages calendar state, navigation, and journal entry retrieval
 /// Handles month navigation and tracks which days have entries
+@MainActor
 @Observable
 class CalendarViewModel {
     private let storage: StorageService

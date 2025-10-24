@@ -71,6 +71,10 @@ struct LetterInboxView: View {
             .refreshable {
                 loadLetters()
             }
+            .onReceive(NotificationCenter.default.publisher(for: .letterDelivered)) { _ in
+                print("📬 [LetterInboxView] Letter delivered notification received - reloading")
+                loadLetters()
+            }
         }
     }
     

@@ -10,6 +10,7 @@ import SwiftUI
 
 /// Manages the 5-step journal entry flow with validation
 /// Security: Validates all inputs before saving
+@MainActor
 @Observable
 class JournalEntryViewModel {
     private let storage: StorageService

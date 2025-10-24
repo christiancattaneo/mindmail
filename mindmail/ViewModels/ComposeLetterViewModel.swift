@@ -8,6 +8,7 @@
 import Foundation
 
 /// Manages letter composition state and validation
+@MainActor
 @Observable
 class ComposeLetterViewModel {
     private let storage: StorageService
@@ -59,36 +60,50 @@ class ComposeLetterViewModel {
     /// Saves and schedules the letter
     /// - Returns: true if successful
     func saveLetter() async -> Bool {
+        print("💌 [ComposeLetterViewModel] saveLetter() called")
+        print("💌 [ComposeLetterViewModel] Subject: '\(subject)', Body: '\(body.prefix(50))...', Date: \(scheduledDate)")
+        
         do {
             // Request permission if needed (shows system Allow/Don't Allow prompt)
+            print("🔔 [ComposeLetterViewModel] Requesting notification permission...")
             let hasPermission = try await notificationService.requestPermission()
+            print("🔔 [ComposeLetterViewModel] Permission granted: \(hasPermission)")
             
             if !hasPermission {
-                // Permission was denied - show alert to go to Settings
+                print("⚠️ [ComposeLetterViewModel] Permission denied, showing alert")
                 showPermissionAlert = true
                 return false
             }
             
             // Create letter
+            print("📝 [ComposeLetterViewModel] Creating letter...")
             let letter = try Letter(
                 subject: subject.isEmpty ? nil : subject,
                 body: body,
                 scheduledDate: scheduledDate,
                 recurrence: recurrence
             )
+            print("📝 [ComposeLetterViewModel] Letter created - ID: \(letter.id)")
             
             // Save to storage (this checks max limit)
+            print("💾 [ComposeLetterViewModel] Saving letter to storage...")
             try storage.saveLetter(letter)
+            print("✅ [ComposeLetterViewModel] Letter saved to storage")
             
             // Schedule notification
+            print("🔔 [ComposeLetterViewModel] Scheduling notification...")
             try notificationService.scheduleLetter(letter)
+            print("✅ [ComposeLetterViewModel] Notification scheduled")
             
+            print("🎉 [ComposeLetterViewModel] Letter save complete!")
             return true
             
         } catch let error as LetterError {
+            print("❌ [ComposeLetterViewModel] LetterError: \(error.localizedDescription)")
             errorMessage = error.localizedDescription
             return false
         } catch {
+            print("❌ [ComposeLetterViewModel] Unknown error: \(error)")
             errorMessage = "Failed to save letter"
             return false
         }

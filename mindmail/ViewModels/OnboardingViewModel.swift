@@ -10,6 +10,7 @@ import SwiftUI
 
 /// Manages the onboarding flow and state
 /// Security: Validates and persists user data securely
+@MainActor
 @Observable
 class OnboardingViewModel {
     private let storage: StorageService

@@ -151,13 +151,18 @@ class StorageService {
     /// - Parameter letter: Letter to save
     /// - Throws: StorageError if save fails or max limit exceeded
     func saveLetter(_ letter: Letter) throws {
+        print("💾 [StorageService] saveLetter() called - ID: \(letter.id)")
+        print("💾 [StorageService] Loading all letters...")
         var letters = try loadAllLetters()
+        print("💾 [StorageService] Found \(letters.count) existing letters")
         
         // Check max letter limit (SAFETY: prevent abuse)
         if !letters.contains(where: { $0.id == letter.id }) {
             // New letter - check limit
             let scheduledCount = letters.filter { !$0.isDelivered }.count
+            print("💾 [StorageService] Scheduled count: \(scheduledCount), max: \(Letter.maxScheduledLetters)")
             guard scheduledCount < Letter.maxScheduledLetters else {
+                print("❌ [StorageService] Max letters exceeded!")
                 throw LetterError.maxLettersExceeded
             }
         }
@@ -167,9 +172,12 @@ class StorageService {
         
         // Add letter
         letters.append(letter)
+        print("💾 [StorageService] Letter added, total letters: \(letters.count)")
         
         // Save back to storage
+        print("💾 [StorageService] Saving to UserDefaults...")
         try saveAllLetters(letters)
+        print("✅ [StorageService] Letter saved successfully - ID: \(letter.id)")
     }
     
     /// Loads all letters
