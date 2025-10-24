@@ -13,6 +13,7 @@ struct LetterInboxView: View {
     @State private var letters: [Letter] = []
     @State private var showCompose = false
     @State private var selectedLetter: Letter?
+    @State private var emojiOffset: CGFloat = 0
     
     private let storage = StorageService.shared
     
@@ -78,6 +79,15 @@ struct LetterInboxView: View {
             
             Text("💌")
                 .font(.system(size: 80))
+                .offset(y: emojiOffset)
+                .onAppear {
+                    withAnimation(
+                        .easeInOut(duration: 2.5)
+                        .repeatForever(autoreverses: true)
+                    ) {
+                        emojiOffset = -8
+                    }
+                }
             
             VStack(spacing: Theme.Spacing.small) {
                 Text("No Letters Yet")
