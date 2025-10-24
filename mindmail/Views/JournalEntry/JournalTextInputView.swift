@@ -49,6 +49,9 @@ struct JournalTextInputView: View {
                             text = String(newValue.prefix(maxLength))
                         }
                     }
+                    .onAppear {
+                        print("📝 [JournalTextInputView] TextEditor appeared")
+                    }
             }
             .padding(Theme.Spacing.small)
             .background(Theme.Colors.cardBackground)

@@ -234,11 +234,13 @@ struct JournalEntryFlowView: View {
     
     private func handleNext() {
         print("➡️ [JournalEntryFlowView] handleNext - current step: \(viewModel.currentStep)")
+        let startTime = Date()
         
         // Haptic feedback
         let generator = UIImpactFeedbackGenerator(style: .medium)
         generator.impactOccurred()
         
+        print("➡️ [JournalEntryFlowView] Unfocusing keyboard...")
         isTextFieldFocused = false
         
         print("➡️ [JournalEntryFlowView] Moving to next step...")
@@ -247,12 +249,9 @@ struct JournalEntryFlowView: View {
         }
         print("➡️ [JournalEntryFlowView] New step: \(viewModel.currentStep)")
         
-        // Auto-focus next text field
-        if viewModel.currentStep != .mood {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                isTextFieldFocused = true
-            }
-        }
+        // DON'T auto-focus - let user tap to focus (prevents hang)
+        // The keyboard appearing causes the freeze
+        print("➡️ [JournalEntryFlowView] Total time: \(Date().timeIntervalSince(startTime))s")
     }
     
     private func handleSwipeBack() {
