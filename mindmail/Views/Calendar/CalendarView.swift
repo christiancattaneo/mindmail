@@ -47,32 +47,29 @@ struct CalendarView: View {
     // MARK: - Greeting Header
     
     private var greetingHeader: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xxxSmall) {
-            HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.xSmall) {
-                Text(greeting)
-                    .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
-                    .foregroundColor(Theme.Colors.textPrimary)
-                
-                Spacer()
-                
-                Text("Daily Journal")
-                    .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
-                    .foregroundStyle(
-                        LinearGradient(
-                            colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                    .padding(.horizontal, Theme.Spacing.small)
-                    .padding(.vertical, Theme.Spacing.xxxSmall)
-                    .background(Theme.Colors.lavender.opacity(0.3))
-                    .cornerRadius(Theme.CornerRadius.small)
-            }
+        VStack(alignment: .leading, spacing: Theme.Spacing.xSmall) {
+            Text(greeting)
+                .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
+                .foregroundColor(Theme.Colors.textPrimary)
             
             Text("Let's reflect on your journey")
                 .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
                 .foregroundColor(Theme.Colors.textSecondary)
+            
+            // Daily Journal badge on left
+            Text("Daily Journal")
+                .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
+                        startPoint: .leading,
+                        endPoint: .trailing
+                    )
+                )
+                .padding(.horizontal, Theme.Spacing.small)
+                .padding(.vertical, Theme.Spacing.xxxSmall)
+                .background(Theme.Colors.lavender.opacity(0.3))
+                .cornerRadius(Theme.CornerRadius.small)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Theme.Spacing.xSmall)
