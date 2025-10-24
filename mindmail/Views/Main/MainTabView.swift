@@ -52,18 +52,11 @@ struct MainTabView: View {
                             print("✅ [MainTabView] JournalEntryFlowView appeared (edit mode)")
                         }
                 } else if let entry = selectedEntry {
-                    // Display mode (viewing existing entry)
-                    JournalEntryDisplayView(
-                        entry: entry,
-                        onEdit: {
-                            print("✏️ [MainTabView] Switching to edit mode")
-                            showEditMode = true
-                        },
-                        onClose: handleJournalComplete
-                    )
-                    .onAppear {
-                        print("👁️ [MainTabView] JournalEntryDisplayView appeared (view mode)")
-                    }
+                    // Display mode (viewing existing entry with inline editing)
+                    JournalEntryDisplayView(entry: entry, onClose: handleJournalComplete)
+                        .onAppear {
+                            print("👁️ [MainTabView] JournalEntryDisplayView appeared (inline edit mode)")
+                        }
                 }
             }
         }
