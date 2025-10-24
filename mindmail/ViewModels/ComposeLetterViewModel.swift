@@ -57,9 +57,11 @@ class ComposeLetterViewModel {
     /// - Returns: true if successful
     func saveLetter() async -> Bool {
         do {
-            // Check notification permission
-            let hasPermission = await notificationService.hasPermission()
+            // Request permission if needed (shows system Allow/Don't Allow prompt)
+            let hasPermission = try await notificationService.requestPermission()
+            
             if !hasPermission {
+                // Permission was denied - show alert to go to Settings
                 showPermissionAlert = true
                 return false
             }
@@ -86,18 +88,6 @@ class ComposeLetterViewModel {
         } catch {
             errorMessage = "Failed to save letter"
             return false
-        }
-    }
-    
-    /// Requests notification permission
-    func requestPermission() async {
-        do {
-            let granted = try await notificationService.requestPermission()
-            if granted {
-                showPermissionAlert = false
-            }
-        } catch {
-            errorMessage = "Failed to request permission"
         }
     }
 }

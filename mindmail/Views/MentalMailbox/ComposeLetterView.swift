@@ -162,15 +162,15 @@ struct ComposeLetterView: View {
                     .disabled(!viewModel.isValid)
                 }
             }
-            .alert("Enable Notifications", isPresented: $viewModel.showPermissionAlert) {
-                Button("Settings") {
+            .alert("Notifications Disabled", isPresented: $viewModel.showPermissionAlert) {
+                Button("Open Settings") {
                     if let url = URL(string: UIApplication.openSettingsURLString) {
                         UIApplication.shared.open(url)
                     }
                 }
-                Button("Not Now", role: .cancel) {}
+                Button("Cancel", role: .cancel) {}
             } message: {
-                Text("Enable notifications to receive your letters from past you.")
+                Text("Notifications are turned off. To receive your letters, please enable notifications in Settings.")
             }
             .alert("Error", isPresented: .constant(viewModel.errorMessage != nil)) {
                 Button("OK") {
