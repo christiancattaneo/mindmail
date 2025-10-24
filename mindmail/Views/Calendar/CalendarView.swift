@@ -47,7 +47,7 @@ struct CalendarView: View {
     // MARK: - Greeting Header
     
     private var greetingHeader: some View {
-        VStack(alignment: .leading, spacing: Theme.Spacing.xSmall) {
+        VStack(alignment: .leading, spacing: Theme.Spacing.xxxSmall) {
             Text(greeting)
                 .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
                 .foregroundColor(Theme.Colors.textPrimary)
@@ -55,21 +55,6 @@ struct CalendarView: View {
             Text("Reflect in your daily journal")
                 .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
                 .foregroundColor(Theme.Colors.textSecondary)
-            
-            // Daily Journal badge on left
-            Text("Daily Journal")
-                .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
-                .foregroundStyle(
-                    LinearGradient(
-                        colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
-                        startPoint: .leading,
-                        endPoint: .trailing
-                    )
-                )
-                .padding(.horizontal, Theme.Spacing.small)
-                .padding(.vertical, Theme.Spacing.xxxSmall)
-                .background(Theme.Colors.lavender.opacity(0.3))
-                .cornerRadius(Theme.CornerRadius.small)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Theme.Spacing.xSmall)
@@ -357,11 +342,11 @@ struct DayCell: View {
                 // Mood emoji or indicator
                 if let entry = entry {
                     Text(entry.mood.emoji)
-                        .font(.system(size: 22))
+                        .font(.system(size: 24))
                 } else {
                     Circle()
-                        .fill(isFuture ? Color.clear : Theme.Colors.textSecondary.opacity(0.2))
-                        .frame(width: 5, height: 5)
+                        .fill(isFuture ? Color.clear : Theme.Colors.textSecondary.opacity(0.25))
+                        .frame(width: 6, height: 6)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -401,11 +386,13 @@ struct DayCell: View {
     }
     
     private func startShadowPulse() {
-        withAnimation(
-            .easeInOut(duration: 1.8)
-            .repeatForever(autoreverses: true)
-        ) {
-            shadowOpacity = 0.6
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(
+                .easeInOut(duration: 1.8)
+                .repeatForever(autoreverses: true)
+            ) {
+                shadowOpacity = 0.6
+            }
         }
     }
     
