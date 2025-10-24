@@ -265,8 +265,6 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
-    @State private var pulseOpacity: Double = 1.0
-    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
@@ -298,22 +296,12 @@ struct DayCell: View {
                     .fill(backgroundColor)
             )
             .overlay(
+                // Static highlight for today - NO ANIMATION to prevent bouncing
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
                     .strokeBorder(borderColor, lineWidth: isToday ? 2.5 : 0)
-                    .opacity(isToday ? pulseOpacity : 1.0)
             )
         }
         .disabled(isFuture)
-        .onAppear {
-            if isToday {
-                withAnimation(
-                    .easeInOut(duration: 1.5)
-                    .repeatForever(autoreverses: true)
-                ) {
-                    pulseOpacity = 0.4
-                }
-            }
-        }
     }
     
     private var backgroundColor: Color {
@@ -328,7 +316,10 @@ struct DayCell: View {
     
     private var borderColor: Color {
         if isToday {
-            return Theme.Colors.lavenderDark
+            // Subtle gradient effect on border
+            return Theme.Colors.cherryBlossomPink
+        } else if isSelected {
+            return Theme.Colors.lavenderDark.opacity(0.5)
         } else {
             return Color.clear
         }

@@ -20,8 +20,12 @@ struct MainTabView: View {
             // Reflect Tab (Calendar + Journal)
             NavigationStack {
                 CalendarView(onDateSelected: { date, entry in
+                    print("📅 Date selected: \(date)")
+                    print("📝 Entry exists: \(entry != nil)")
                     selectedDate = date
-                    showJournalEntry = true
+                    DispatchQueue.main.async {
+                        showJournalEntry = true
+                    }
                 })
                 .id(refreshCalendar) // Force refresh when this changes
             }
@@ -41,11 +45,17 @@ struct MainTabView: View {
         .sheet(isPresented: $showJournalEntry) {
             // Reload calendar when sheet dismisses
             refreshCalendar.toggle()
+            print("📋 Journal entry sheet dismissed")
         } content: {
             if let date = selectedDate {
+                print("🎨 Rendering JournalEntryFlowView for date: \(date)")
                 JournalEntryFlowView(date: date) {
+                    print("✅ Journal entry completed")
                     showJournalEntry = false
                 }
+            } else {
+                print("❌ ERROR: selectedDate is nil!")
+                Color.red // Debug: show red if date is nil
             }
         }
     }

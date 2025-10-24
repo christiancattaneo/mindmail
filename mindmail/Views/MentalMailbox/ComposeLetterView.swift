@@ -193,26 +193,43 @@ struct ComposeLetterView: View {
                 .foregroundColor(Theme.Colors.textPrimary)
                 .padding(.horizontal, Theme.Spacing.xxSmall)
             
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: Theme.Spacing.small) {
-                ForEach(TimePreset.allCases.filter { $0 != .custom }) { preset in
-                    TimePresetButton(
-                        preset: preset,
-                        isSelected: selectedPreset == preset
-                    ) {
-                        withAnimation(Theme.Animation.spring) {
-                            selectedPreset = preset
-                        }
+            // Use fixed columns to avoid NaN layout issues
+            VStack(spacing: Theme.Spacing.small) {
+                HStack(spacing: Theme.Spacing.small) {
+                    TimePresetButton(preset: .oneWeek, isSelected: selectedPreset == .oneWeek) {
+                        withAnimation(Theme.Animation.spring) { selectedPreset = .oneWeek }
+                    }
+                    TimePresetButton(preset: .oneMonth, isSelected: selectedPreset == .oneMonth) {
+                        withAnimation(Theme.Animation.spring) { selectedPreset = .oneMonth }
                     }
                 }
-            }
-            
-            // Custom button (full width)
-            TimePresetButton(
-                preset: .custom,
-                isSelected: selectedPreset == .custom,
-                isFullWidth: true
-            ) {
-                selectedPreset = .custom
+                
+                HStack(spacing: Theme.Spacing.small) {
+                    TimePresetButton(preset: .threeMonths, isSelected: selectedPreset == .threeMonths) {
+                        withAnimation(Theme.Animation.spring) { selectedPreset = .threeMonths }
+                    }
+                    TimePresetButton(preset: .sixMonths, isSelected: selectedPreset == .sixMonths) {
+                        withAnimation(Theme.Animation.spring) { selectedPreset = .sixMonths }
+                    }
+                }
+                
+                HStack(spacing: Theme.Spacing.small) {
+                    TimePresetButton(preset: .oneYear, isSelected: selectedPreset == .oneYear) {
+                        withAnimation(Theme.Animation.spring) { selectedPreset = .oneYear }
+                    }
+                    TimePresetButton(preset: .fiveYears, isSelected: selectedPreset == .fiveYears) {
+                        withAnimation(Theme.Animation.spring) { selectedPreset = .fiveYears }
+                    }
+                }
+                
+                // Custom button (full width)
+                TimePresetButton(
+                    preset: .custom,
+                    isSelected: selectedPreset == .custom,
+                    isFullWidth: true
+                ) {
+                    selectedPreset = .custom
+                }
             }
         }
     }
@@ -308,27 +325,29 @@ struct TimePresetButton: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: Theme.Spacing.small) {
+            VStack(spacing: Theme.Spacing.xSmall) {
                 Image(systemName: preset.icon)
-                    .font(.system(size: 26))
+                    .font(.system(size: 24))
                     .foregroundColor(isSelected ? Theme.Colors.lavenderDark : Theme.Colors.textSecondary)
+                    .frame(height: 24)
                 
                 Text(preset.label)
-                    .font(.system(size: Theme.Typography.subheadline, weight: isSelected ? Theme.Typography.bold : Theme.Typography.semibold))
+                    .font(.system(size: Theme.Typography.footnote, weight: isSelected ? Theme.Typography.bold : Theme.Typography.semibold))
                     .foregroundColor(isSelected ? Theme.Colors.textPrimary : Theme.Colors.textSecondary)
+                    .lineLimit(1)
                 
                 if !isFullWidth {
                     Text(preset.description)
-                        .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
+                        .font(.system(size: 10, weight: Theme.Typography.regular))
                         .foregroundColor(Theme.Colors.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .minimumScaleFactor(0.9)
+                        .frame(height: 24)
                 }
             }
-            .padding(.vertical, Theme.Spacing.medium)
-            .padding(.horizontal, Theme.Spacing.xSmall)
-            .frame(maxWidth: .infinity, minHeight: isFullWidth ? 60 : 100)
+            .padding(Theme.Spacing.small)
+            .frame(maxWidth: .infinity)
+            .frame(height: isFullWidth ? 64 : 100)
             .background(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
                     .fill(isSelected ? Theme.Colors.lavender.opacity(0.3) : Theme.Colors.cardBackground)
