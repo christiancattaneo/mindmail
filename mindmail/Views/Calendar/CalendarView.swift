@@ -207,14 +207,14 @@ struct CalendarView: View {
                     x: 0,
                     y: Theme.Shadow.subtle.y
                 )
+                .simultaneousGesture(
+                    DragGesture(minimumDistance: 50)
+                        .onEnded { value in
+                            handleSwipe(value)
+                        }
+                )
         )
         .padding(.horizontal, Theme.Spacing.xSmall)
-        .gesture(
-            DragGesture(minimumDistance: 50)
-                .onEnded { value in
-                    handleSwipe(value)
-                }
-        )
     }
     
     // MARK: - Swipe Gesture
@@ -265,8 +265,6 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
-    @State private var glowOpacity: Double = 0.3
-    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
@@ -275,39 +273,20 @@ struct DayCell: View {
     
     var body: some View {
         Button(action: onTap) {
-            ZStack {
-                // Subtle glow effect for today (behind everything)
-                if isToday {
-                    Circle()
-                        .fill(Theme.Colors.cherryBlossomPink.opacity(glowOpacity))
-                        .frame(width: 36, height: 36)
-                        .blur(radius: 8)
-                        .onAppear {
-                            withAnimation(
-                                .easeInOut(duration: 2.0)
-                                .repeatForever(autoreverses: true)
-                            ) {
-                                glowOpacity = 0.6
-                            }
-                        }
-                }
+            VStack(spacing: Theme.Spacing.xxxSmall) {
+                // Day number
+                Text(dayNumber)
+                    .font(.system(size: Theme.Typography.subheadline, weight: isToday ? Theme.Typography.bold : Theme.Typography.medium))
+                    .foregroundColor(isFuture ? Theme.Colors.textSecondary.opacity(0.5) : Theme.Colors.textPrimary)
                 
-                // Main content (unaffected by glow animation)
-                VStack(spacing: Theme.Spacing.xxxSmall) {
-                    // Day number
-                    Text(dayNumber)
-                        .font(.system(size: Theme.Typography.subheadline, weight: isToday ? Theme.Typography.bold : Theme.Typography.medium))
-                        .foregroundColor(isFuture ? Theme.Colors.textSecondary.opacity(0.5) : Theme.Colors.textPrimary)
-                    
-                    // Mood emoji or indicator
-                    if let entry = entry {
-                        Text(entry.mood.emoji)
-                            .font(.system(size: 22))
-                    } else {
-                        Circle()
-                            .fill(isFuture ? Color.clear : Theme.Colors.textSecondary.opacity(0.2))
-                            .frame(width: 5, height: 5)
-                    }
+                // Mood emoji or indicator
+                if let entry = entry {
+                    Text(entry.mood.emoji)
+                        .font(.system(size: 22))
+                } else {
+                    Circle()
+                        .fill(isFuture ? Color.clear : Theme.Colors.textSecondary.opacity(0.2))
+                        .frame(width: 5, height: 5)
                 }
             }
             .frame(maxWidth: .infinity)
@@ -317,11 +296,19 @@ struct DayCell: View {
                     .fill(backgroundColor)
             )
             .overlay(
-                // Static border for today and selected
+                // Beautiful border for today and selected (no blur, no bouncing!)
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
                     .strokeBorder(borderColor, lineWidth: isToday ? 2.5 : isSelected ? 2 : 0)
             )
+            .shadow(
+                // Subtle shadow for today to make it stand out
+                color: isToday ? Theme.Colors.cherryBlossomPink.opacity(0.3) : Color.clear,
+                radius: isToday ? 6 : 0,
+                x: 0,
+                y: 0
+            )
         }
+        .buttonStyle(PlainButtonStyle())
         .disabled(isFuture)
     }
     

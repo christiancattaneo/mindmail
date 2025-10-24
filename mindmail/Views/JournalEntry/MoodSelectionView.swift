@@ -49,18 +49,17 @@ struct MoodButton: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: Theme.Spacing.small) {
-                // Emoji with glow effect when selected
+                // Emoji with subtle background when selected
                 ZStack {
                     if isSelected {
                         Circle()
-                            .fill(Theme.colorForMood(mood).opacity(0.2))
-                            .frame(width: 70, height: 70)
-                            .blur(radius: 10)
+                            .fill(Theme.colorForMood(mood).opacity(0.25))
+                            .frame(width: 65, height: 65)
                     }
                     
                     Text(mood.emoji)
                         .font(.system(size: 52))
-                        .scaleEffect(isSelected ? 1.15 : 1.0)
+                        .scaleEffect(isSelected ? 1.1 : 1.0)
                 }
                 
                 // Label

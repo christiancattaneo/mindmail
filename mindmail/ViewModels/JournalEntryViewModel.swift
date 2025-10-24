@@ -57,13 +57,16 @@ class JournalEntryViewModel {
         self.date = date
         self.storage = storage
         
-        // Load existing entry if it exists
-        loadExistingEntry()
+        // Load existing entry asynchronously to avoid blocking UI
+        Task {
+            await loadExistingEntry()
+        }
     }
     
     // MARK: - Data Loading
     
-    private func loadExistingEntry() {
+    @MainActor
+    private func loadExistingEntry() async {
         do {
             if let entry = try storage.loadJournalEntry(for: date) {
                 selectedMood = entry.mood
@@ -73,7 +76,7 @@ class JournalEntryViewModel {
                 lookingForward = entry.lookingForward
             }
         } catch {
-            print("Error loading existing entry: \(error.localizedDescription)")
+            // Silent fail - entry just starts empty
         }
     }
     
