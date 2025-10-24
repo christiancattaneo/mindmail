@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MindMail - Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #2d2d3a;
+            background: linear-gradient(180deg, #f0e6ff 0%, #fffef8 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d2d3a;
+            margin-bottom: 10px;
+        }
+        
+        .app-name {
+            background: linear-gradient(90deg, #d0b8ff, #F5B8D8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .subtitle {
+            color: #8b8b9a;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d2d3a;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        
+        h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d2d3a;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        p, li {
+            margin-bottom: 12px;
+            color: #2d2d3a;
+        }
+        
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .feature-card {
+            background: #f0e6ff;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .emoji {
+            font-size: 20px;
+            margin-right: 8px;
+        }
+        
+        code {
+            background: #f0e6ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 14px;
+        }
+        
+        a {
+            color: #d0b8ff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="app-name">MindMail</span> Support</h1>
+        <p class="subtitle">Your guide to daily reflection and future letters</p>
+        
+        <h2>Getting Started</h2>
+        <ol>
+            <li>Download MindMail from the App Store</li>
+            <li>Complete onboarding by entering your name</li>
+            <li>Choose your feature: Daily Journal or Mental Mailbox</li>
+        </ol>
+        
+        <h2>Features</h2>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">📅</span>Daily Journal Calendar</h3>
+            <p><strong>How to create an entry:</strong></p>
+            <ol>
+                <li>Go to the Calendar tab</li>
+                <li>Tap any date (today or past)</li>
+                <li>Complete 5 simple steps:
+                    <ul>
+                        <li>Select your mood (6 emoji options)</li>
+                        <li>What was hard today?</li>
+                        <li>What are you grateful for?</li>
+                        <li>A moment to remember</li>
+                        <li>What are you looking forward to?</li>
+                    </ul>
+                </li>
+                <li>Tap "Save" - your emoji appears on the calendar!</li>
+            </ol>
+            
+            <p><strong>Tips:</strong></p>
+            <ul>
+                <li>Swipe left/right to change months</li>
+                <li>Tap the month to jump to any date</li>
+                <li>Each prompt has a 140 character limit (quick and focused)</li>
+            </ul>
+        </div>
+        
+        <div class="feature-card">
+            <h3><span class="emoji">💌</span>Mental Mailbox</h3>
+            <p><strong>How to send a letter:</strong></p>
+            <ol>
+                <li>Go to the Mental Mailbox tab</li>
+                <li>Tap the + button</li>
+                <li>Write your message to future self</li>
+                <li>Choose when to receive it:
+                    <ul>
+                        <li>In 1 week - quick check-in</li>
+                        <li>In 1 month - next month you</li>
+                        <li>In 1 year - annual time capsule</li>
+                        <li>In 5 years - major milestone</li>
+                        <li>Custom - pick any date</li>
+                    </ul>
+                </li>
+                <li>Tap "Send 💌"</li>
+            </ol>
+            
+            <p><strong>Receiving letters:</strong></p>
+            <ul>
+                <li>You'll get a notification at the scheduled time</li>
+                <li>Letter appears in your inbox under "Received"</li>
+                <li>Tap to read the full message</li>
+                <li>Re-read anytime you want</li>
+            </ul>
+        </div>
+        
+        <h2>Frequently Asked Questions</h2>
+        
+        <h3>Where is my data stored?</h3>
+        <p>All your data is stored <strong>locally on your device</strong>. Nothing is sent to servers or the cloud.</p>
+        
+        <h3>How do I delete an entry or letter?</h3>
+        <p>Swipe left on any letter in the inbox, or tap "Delete" at the bottom when reading a letter.</p>
+        
+        <h3>Why aren't my notifications working?</h3>
+        <p>Check: <code>Settings → Notifications → MindMail</code> and ensure "Allow Notifications" is ON.</p>
+        
+        <h3>Can I edit a journal entry after saving?</h3>
+        <p>Yes! Tap the same date again and your previous entry will load. Make changes and save.</p>
+        
+        <h3>What happens to scheduled letters if I delete the app?</h3>
+        <p>All data is deleted permanently when you delete the app. There's no way to recover it.</p>
+        
+        <h3>Will my data sync across devices?</h3>
+        <p>No. MindMail is local-only. Each device has its own separate data.</p>
+        
+        <h3>Can I export my journal?</h3>
+        <p>Currently not supported. Future updates may add this feature.</p>
+        
+        <h3>Is there a character limit?</h3>
+        <p>Journal prompts: 140 characters each<br>
+        Letter subject: 50 characters<br>
+        Letter body: 500 characters</p>
+        
+        <h3>How many letters can I schedule?</h3>
+        <p>Maximum 100 scheduled letters at a time (for performance).</p>
+        
+        <h2>Troubleshooting</h2>
+        
+        <h3>Notifications not appearing</h3>
+        <ul>
+            <li>Check notification permissions in Settings</li>
+            <li>Ensure "Do Not Disturb" is off</li>
+            <li>Open the app - letters appear in inbox even without notification</li>
+        </ul>
+        
+        <h3>App feels slow</h3>
+        <ul>
+            <li>Restart the app</li>
+            <li>If you have 90+ scheduled letters, delete some old ones</li>
+        </ul>
+        
+        <h3>Lost my data</h3>
+        <ul>
+            <li>Data is local only - if you deleted the app, data is gone</li>
+            <li>Check if you have iCloud backup enabled (restoring may recover it)</li>
+        </ul>
+        
+        <h2>Contact & Support</h2>
+        <p>Need help? Have feedback? We'd love to hear from you!</p>
+        <p><strong>Email:</strong> <a href="mailto:your-email@example.com">your-email@example.com</a></p>
+        
+        <div class="feature-card">
+            <p><span class="emoji">💜</span><strong>Thank you for using MindMail!</strong></p>
+            <p>Your emotional wellness journey matters to us.</p>
+        </div>
+    </div>
+</body>
+</html>
+
