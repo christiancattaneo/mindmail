@@ -18,18 +18,22 @@ struct LetterInboxView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: Theme.Spacing.medium) {
-                    if letters.isEmpty {
-                        emptyState
-                    } else {
-                        lettersSection(title: "Scheduled", letters: scheduledLetters)
-                        lettersSection(title: "Received", letters: deliveredLetters)
+            ZStack {
+                Theme.Colors.background
+                    .ignoresSafeArea()
+                
+                if letters.isEmpty {
+                    emptyState
+                } else {
+                    ScrollView {
+                        VStack(spacing: Theme.Spacing.medium) {
+                            lettersSection(title: "Scheduled", letters: scheduledLetters)
+                            lettersSection(title: "Received", letters: deliveredLetters)
+                        }
+                        .padding(Theme.Spacing.medium)
                     }
                 }
-                .padding(Theme.Spacing.medium)
             }
-            .themeBackground()
             .navigationTitle("Mental Mailbox")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -71,6 +75,7 @@ struct LetterInboxView: View {
                     .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
                     .foregroundColor(Theme.Colors.textSecondary)
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal, Theme.Spacing.large)
             }
             
             Button(action: {
@@ -79,7 +84,7 @@ struct LetterInboxView: View {
                 Text("Write First Letter")
                     .font(.system(size: Theme.Typography.headline, weight: Theme.Typography.semibold))
                     .foregroundColor(.white)
-                    .padding(.horizontal, Theme.Spacing.large)
+                    .frame(maxWidth: 280)
                     .padding(.vertical, Theme.Spacing.medium)
                     .background(
                         LinearGradient(
@@ -89,10 +94,18 @@ struct LetterInboxView: View {
                         )
                     )
                     .cornerRadius(Theme.CornerRadius.large)
+                    .shadow(
+                        color: Theme.Shadow.medium.color,
+                        radius: Theme.Shadow.medium.radius,
+                        x: Theme.Shadow.medium.x,
+                        y: Theme.Shadow.medium.y
+                    )
             }
+            .padding(.horizontal, Theme.Spacing.large)
             
             Spacer()
         }
+        .frame(maxWidth: .infinity)
     }
     
     // MARK: - Letters Section

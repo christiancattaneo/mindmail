@@ -179,7 +179,7 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
-    @State private var isPulsing = false
+    @State private var pulseScale: CGFloat = 1.0
     
     private var dayNumber: String {
         let formatter = DateFormatter()
@@ -214,17 +214,18 @@ struct DayCell: View {
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.medium)
                     .strokeBorder(borderColor, lineWidth: isToday ? 2 : 0)
-                    .scaleEffect(isPulsing && isToday ? 1.05 : 1.0)
-                    .animation(
-                        isToday ? .easeInOut(duration: 1.0).repeatForever(autoreverses: true) : .default,
-                        value: isPulsing
-                    )
             )
+            .scaleEffect(isToday ? pulseScale : 1.0)
         }
         .disabled(isFuture)
         .onAppear {
             if isToday {
-                isPulsing = true
+                withAnimation(
+                    .easeInOut(duration: 1.5)
+                    .repeatForever(autoreverses: true)
+                ) {
+                    pulseScale = 1.08
+                }
             }
         }
     }
