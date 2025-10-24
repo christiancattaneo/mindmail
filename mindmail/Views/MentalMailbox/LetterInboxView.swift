@@ -181,12 +181,10 @@ struct LetterInboxView: View {
                         selectedLetter = letter
                     }
                     .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                        if !letter.isDelivered {
-                            Button(role: .destructive) {
-                                deleteLetter(letter)
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
+                        Button(role: .destructive) {
+                            deleteLetter(letter)
+                        } label: {
+                            Label("Delete", systemImage: "trash")
                         }
                     }
                 }

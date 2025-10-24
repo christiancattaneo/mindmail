@@ -64,10 +64,8 @@ struct LetterReadingView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
-                // Delete button (only for scheduled letters)
-                if !letter.isDelivered {
-                    deleteButton
-                }
+                // Delete button
+                deleteButton
             }
             .background(Theme.Colors.creamIvory)
             .navigationBarTitleDisplayMode(.inline)
