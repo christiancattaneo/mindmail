@@ -39,13 +39,26 @@ struct MainTabView: View {
             Group {
                 if let date = selectedDate {
                     JournalEntryFlowView(date: date, onComplete: handleJournalComplete)
+                        .onAppear {
+                            print("✅ [MainTabView] JournalEntryFlowView appeared with date: \(date)")
+                        }
                 } else {
-                    Text("Error: No date selected")
-                        .foregroundColor(.red)
+                    VStack(spacing: Theme.Spacing.medium) {
+                        Text("❌ Error: No date selected")
+                            .foregroundColor(.red)
+                            .font(.headline)
+                        Text("selectedDate is nil")
+                            .foregroundColor(.gray)
+                            .font(.caption)
+                        Button("Close") {
+                            showJournalEntry = false
+                        }
+                    }
+                    .padding()
+                    .onAppear {
+                        print("❌ [MainTabView] ERROR VIEW appeared - selectedDate is nil!")
+                    }
                 }
-            }
-            .onAppear {
-                print("🎬 [MainTabView] Sheet appeared - selectedDate: \(String(describing: selectedDate))")
             }
         }
     }
@@ -55,8 +68,12 @@ struct MainTabView: View {
     private func handleDateSelection(date: Date, entry: JournalEntry?) {
         print("📲 [MainTabView] Date selected: \(date), hasEntry: \(entry != nil)")
         selectedDate = date
-        showJournalEntry = true
-        print("📲 [MainTabView] State updated - showing sheet")
+        
+        // Small delay to ensure state is fully updated before showing sheet
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            print("📲 [MainTabView] Showing sheet with selectedDate: \(String(describing: self.selectedDate))")
+            showJournalEntry = true
+        }
     }
     
     private func handleSheetDismiss() {
