@@ -48,9 +48,27 @@ struct CalendarView: View {
     
     private var greetingHeader: some View {
         VStack(alignment: .leading, spacing: Theme.Spacing.xxxSmall) {
-            Text(greeting)
-                .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
-                .foregroundColor(Theme.Colors.textPrimary)
+            HStack(alignment: .firstTextBaseline, spacing: Theme.Spacing.xSmall) {
+                Text(greeting)
+                    .font(.system(size: Theme.Typography.largeTitle, weight: Theme.Typography.bold))
+                    .foregroundColor(Theme.Colors.textPrimary)
+                
+                Spacer()
+                
+                Text("Daily Journal")
+                    .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
+                    .foregroundStyle(
+                        LinearGradient(
+                            colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .padding(.horizontal, Theme.Spacing.small)
+                    .padding(.vertical, Theme.Spacing.xxxSmall)
+                    .background(Theme.Colors.lavender.opacity(0.3))
+                    .cornerRadius(Theme.CornerRadius.small)
+            }
             
             Text("Let's reflect on your journey")
                 .font(.system(size: Theme.Typography.body, weight: Theme.Typography.regular))
