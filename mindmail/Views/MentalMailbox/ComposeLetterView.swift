@@ -271,6 +271,7 @@ struct ComposeLetterView: View {
                 )
                 .datePickerStyle(.graphical)
                 .tint(Theme.Colors.lavenderDark)
+                .colorScheme(.light)
                 .padding()
                 .background(Color.white)
                 .cornerRadius(Theme.CornerRadius.large)

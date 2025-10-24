@@ -94,6 +94,7 @@ struct CalendarView: View {
                 )
                 .datePickerStyle(.graphical)
                 .tint(Theme.Colors.lavenderDark)
+                .colorScheme(.light)
                 .padding()
                 .background(Color.white)
                 .cornerRadius(Theme.CornerRadius.large)
@@ -322,8 +323,6 @@ struct DayCell: View {
     let isSelected: Bool
     let onTap: () -> Void
     
-    @State private var floatOffset: CGFloat = 0
-    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
@@ -364,37 +363,9 @@ struct DayCell: View {
                 x: 0,
                 y: 0
             )
-            .offset(y: (isToday || isSelected) ? floatOffset : 0)
-            .onAppear {
-                if isToday || isSelected {
-                    startFloating()
-                }
-            }
-            .onChange(of: isSelected) { _, newValue in
-                if newValue {
-                    startFloating()
-                } else {
-                    stopFloating()
-                }
-            }
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(isFuture)
-    }
-    
-    private func startFloating() {
-        withAnimation(
-            .easeInOut(duration: 2.0)
-            .repeatForever(autoreverses: true)
-        ) {
-            floatOffset = -3
-        }
-    }
-    
-    private func stopFloating() {
-        withAnimation(.easeOut(duration: 0.3)) {
-            floatOffset = 0
-        }
     }
     
     private var backgroundColor: Color {

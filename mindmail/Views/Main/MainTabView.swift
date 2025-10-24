@@ -11,9 +11,15 @@ import SwiftUI
 /// Design: Clean tab bar with aesthetic icons and smooth transitions
 struct MainTabView: View {
     @State private var selectedTab = 0
-    @State private var showJournalEntry = false
     @State private var selectedDate: Date?
     @State private var refreshCalendar = false
+    
+    private var showJournalEntry: Binding<Bool> {
+        Binding(
+            get: { selectedDate != nil },
+            set: { if !$0 { selectedDate = nil } }
+        )
+    }
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -35,30 +41,12 @@ struct MainTabView: View {
                 .tag(1)
         }
         .tint(Theme.Colors.lavenderDark)
-        .sheet(isPresented: $showJournalEntry, onDismiss: handleSheetDismiss) {
-            Group {
-                if let date = selectedDate {
-                    JournalEntryFlowView(date: date, onComplete: handleJournalComplete)
-                        .onAppear {
-                            print("✅ [MainTabView] JournalEntryFlowView appeared with date: \(date)")
-                        }
-                } else {
-                    VStack(spacing: Theme.Spacing.medium) {
-                        Text("❌ Error: No date selected")
-                            .foregroundColor(.red)
-                            .font(.headline)
-                        Text("selectedDate is nil")
-                            .foregroundColor(.gray)
-                            .font(.caption)
-                        Button("Close") {
-                            showJournalEntry = false
-                        }
-                    }
-                    .padding()
+        .sheet(isPresented: showJournalEntry, onDismiss: handleSheetDismiss) {
+            if let date = selectedDate {
+                JournalEntryFlowView(date: date, onComplete: handleJournalComplete)
                     .onAppear {
-                        print("❌ [MainTabView] ERROR VIEW appeared - selectedDate is nil!")
+                        print("✅ [MainTabView] JournalEntryFlowView appeared with date: \(date)")
                     }
-                }
             }
         }
     }
@@ -68,22 +56,18 @@ struct MainTabView: View {
     private func handleDateSelection(date: Date, entry: JournalEntry?) {
         print("📲 [MainTabView] Date selected: \(date), hasEntry: \(entry != nil)")
         selectedDate = date
-        
-        // Small delay to ensure state is fully updated before showing sheet
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-            print("📲 [MainTabView] Showing sheet with selectedDate: \(String(describing: self.selectedDate))")
-            showJournalEntry = true
-        }
+        print("📲 [MainTabView] selectedDate is now: \(String(describing: selectedDate))")
     }
     
     private func handleSheetDismiss() {
         print("🚪 [MainTabView] Sheet dismissed, refreshing calendar")
+        selectedDate = nil
         refreshCalendar.toggle()
     }
     
     private func handleJournalComplete() {
         print("🏁 [MainTabView] Journal entry completed")
-        showJournalEntry = false
+        selectedDate = nil
     }
 }
 
