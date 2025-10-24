@@ -28,7 +28,10 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     ) {
         print("🔔 [NotificationDelegate] Notification will present - ID: \(notification.request.identifier)")
         
-        handleNotification(notification)
+        // Handle on main thread
+        Task { @MainActor in
+            await handleNotification(notification)
+        }
         
         // Show notification even when app is in foreground
         completionHandler([.banner, .sound, .badge])
@@ -42,14 +45,18 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     ) {
         print("🔔 [NotificationDelegate] Notification tapped - ID: \(response.notification.request.identifier)")
         
-        handleNotification(response.notification)
+        // Handle on main thread
+        Task { @MainActor in
+            await handleNotification(response.notification)
+        }
         
         completionHandler()
     }
     
     /// Handles the notification by marking letter as delivered
-    nonisolated private func handleNotification(_ notification: UNNotification) {
-        print("📬 [NotificationDelegate] Handling notification...")
+    @MainActor
+    private func handleNotification(_ notification: UNNotification) async {
+        print("📬 [NotificationDelegate] Handling notification on main thread...")
         
         guard let letterIdString = notification.request.content.userInfo["letterId"] as? String,
               let letterId = UUID(uuidString: letterIdString) else {
