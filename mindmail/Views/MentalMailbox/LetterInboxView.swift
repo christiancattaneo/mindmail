@@ -36,6 +36,9 @@ struct LetterInboxView: View {
             }
             .navigationTitle("Mental Mailbox")
             .navigationBarTitleDisplayMode(.large)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(Color.black, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
@@ -43,13 +46,7 @@ struct LetterInboxView: View {
                     }) {
                         Image(systemName: "plus.circle.fill")
                             .font(.system(size: 28))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .foregroundColor(.white)
                     }
                 }
             }
