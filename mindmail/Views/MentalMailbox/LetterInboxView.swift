@@ -114,12 +114,17 @@ struct LetterInboxView: View {
             Text("💌")
                 .font(.system(size: 80))
                 .offset(y: emojiOffset)
-                .task {
-                    withAnimation(
-                        .easeInOut(duration: 2.5)
-                        .repeatForever(autoreverses: true)
-                    ) {
-                        emojiOffset = -8
+                .onAppear {
+                    print("💌 [LetterInboxView] Envelope emoji appeared, starting animation")
+                    // Small delay to ensure view is rendered
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation(
+                            .easeInOut(duration: 2.5)
+                            .repeatForever(autoreverses: true)
+                        ) {
+                            emojiOffset = -8
+                        }
+                        print("💌 [LetterInboxView] Animation started - emojiOffset target: -8")
                     }
                 }
             
