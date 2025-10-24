@@ -31,6 +31,21 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         print("✅ [AppDelegate] Notification delegate set")
         
+        // Check for letters that should have been delivered while app was closed
+        Task { @MainActor in
+            print("🔍 [AppDelegate] Checking for past-due letters...")
+            LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+        }
+        
         return true
+    }
+    
+    func applicationDidBecomeActive(_ application: UIApplication) {
+        print("👀 [AppDelegate] App became active")
+        
+        // Check again when app comes to foreground
+        Task { @MainActor in
+            LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+        }
     }
 }

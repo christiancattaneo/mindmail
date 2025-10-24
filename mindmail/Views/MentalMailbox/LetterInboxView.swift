@@ -66,9 +66,15 @@ struct LetterInboxView: View {
                 LetterReadingView(letter: letter)
             }
             .onAppear {
+                print("👀 [LetterInboxView] View appeared")
+                // Check for past-due letters first
+                LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
+                // Then load all letters
                 loadLetters()
             }
             .refreshable {
+                // Check for past-due letters when user pulls to refresh
+                LetterDeliveryService.shared.checkAndDeliverPastDueLetters()
                 loadLetters()
             }
             .onReceive(NotificationCenter.default.publisher(for: .letterDelivered)) { _ in
