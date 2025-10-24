@@ -44,36 +44,86 @@ struct MoodButton: View {
     let isSelected: Bool
     let onTap: () -> Void
     
+    @State private var isPressed = false
+    
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: Theme.Spacing.xSmall) {
-                // Emoji
-                Text(mood.emoji)
-                    .font(.system(size: 50))
-                    .scaleEffect(isSelected ? 1.1 : 1.0)
+            VStack(spacing: Theme.Spacing.small) {
+                // Emoji with glow effect when selected
+                ZStack {
+                    if isSelected {
+                        Circle()
+                            .fill(Theme.colorForMood(mood).opacity(0.2))
+                            .frame(width: 70, height: 70)
+                            .blur(radius: 10)
+                    }
+                    
+                    Text(mood.emoji)
+                        .font(.system(size: 52))
+                        .scaleEffect(isSelected ? 1.15 : 1.0)
+                }
                 
                 // Label
                 Text(mood.label)
-                    .font(.system(size: Theme.Typography.subheadline, weight: isSelected ? Theme.Typography.semibold : Theme.Typography.regular))
+                    .font(.system(size: Theme.Typography.footnote, weight: isSelected ? Theme.Typography.bold : Theme.Typography.semibold))
                     .foregroundColor(isSelected ? Theme.Colors.textPrimary : Theme.Colors.textSecondary)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, Theme.Spacing.medium)
+            .padding(.vertical, Theme.Spacing.large)
             .background(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
-                    .fill(isSelected ? Theme.colorForMood(mood).opacity(0.3) : Theme.Colors.cardBackground)
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.xLarge)
+                    .fill(
+                        isSelected ? 
+                        LinearGradient(
+                            colors: [
+                                Theme.colorForMood(mood).opacity(0.4),
+                                Theme.colorForMood(mood).opacity(0.2)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) :
+                        LinearGradient(
+                            colors: [Theme.Colors.cardBackground, Theme.Colors.cardBackground],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
             )
             .overlay(
-                RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
-                    .strokeBorder(isSelected ? Theme.colorForMood(mood) : Color.clear, lineWidth: 2)
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.xLarge)
+                    .strokeBorder(
+                        isSelected ? 
+                        LinearGradient(
+                            colors: [Theme.colorForMood(mood), Theme.colorForMood(mood).opacity(0.5)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ) : 
+                        LinearGradient(colors: [Color.clear, Color.clear], startPoint: .top, endPoint: .bottom),
+                        lineWidth: isSelected ? 2.5 : 0
+                    )
             )
             .shadow(
-                color: isSelected ? Theme.Shadow.medium.color : Theme.Shadow.subtle.color,
-                radius: isSelected ? Theme.Shadow.medium.radius : Theme.Shadow.subtle.radius,
+                color: isSelected ? Theme.colorForMood(mood).opacity(0.3) : Theme.Shadow.subtle.color,
+                radius: isSelected ? 12 : Theme.Shadow.subtle.radius,
                 x: 0,
-                y: isSelected ? Theme.Shadow.medium.y : Theme.Shadow.subtle.y
+                y: isSelected ? 4 : Theme.Shadow.subtle.y
             )
+            .scaleEffect(isPressed ? 0.95 : 1.0)
         }
+        .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        isPressed = true
+                    }
+                }
+                .onEnded { _ in
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        isPressed = false
+                    }
+                }
+        )
         .animation(Theme.Animation.spring, value: isSelected)
     }
 }

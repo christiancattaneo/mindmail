@@ -26,7 +26,7 @@ struct LetterInboxView: View {
                     emptyState
                 } else {
                     ScrollView {
-                        VStack(spacing: Theme.Spacing.medium) {
+                        VStack(spacing: Theme.Spacing.large) {
                             lettersSection(title: "Scheduled", letters: scheduledLetters)
                             lettersSection(title: "Received", letters: deliveredLetters)
                         }
@@ -35,13 +35,21 @@ struct LetterInboxView: View {
                 }
             }
             .navigationTitle("Mental Mailbox")
+            .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: {
                         showCompose = true
                     }) {
-                        Image(systemName: "plus")
-                            .font(.system(size: Theme.Typography.body, weight: Theme.Typography.semibold))
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 28))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
                     }
                 }
             }
@@ -156,6 +164,8 @@ struct LetterCard: View {
     let letter: Letter
     let onTap: () -> Void
     
+    @State private var isPressed = false
+    
     private var formattedDate: String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -166,40 +176,53 @@ struct LetterCard: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: Theme.Spacing.medium) {
-                // Icon
+                // Icon with gradient background
                 ZStack {
                     Circle()
-                        .fill(letter.isDelivered ? Theme.Colors.cherryBlossomPink.opacity(0.3) : Theme.Colors.lavender.opacity(0.3))
-                        .frame(width: 50, height: 50)
+                        .fill(
+                            LinearGradient(
+                                colors: letter.isDelivered ? 
+                                    [Theme.Colors.cherryBlossomPink.opacity(0.4), Theme.Colors.cherryBlossomPink.opacity(0.2)] :
+                                    [Theme.Colors.lavender.opacity(0.4), Theme.Colors.paleBlue.opacity(0.2)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                        .frame(width: 56, height: 56)
                     
-                    Text(letter.isDelivered ? "📬" : "📭")
-                        .font(.system(size: 24))
+                    Text(letter.isDelivered ? "💌" : "📮")
+                        .font(.system(size: 26))
                 }
                 
                 // Content
                 VStack(alignment: .leading, spacing: Theme.Spacing.xxxSmall) {
                     if let subject = letter.subject {
                         Text(subject)
-                            .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.semibold))
+                            .font(.system(size: Theme.Typography.body, weight: Theme.Typography.bold))
                             .foregroundColor(Theme.Colors.textPrimary)
                             .lineLimit(1)
                     }
                     
                     Text(letter.body)
-                        .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
+                        .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.regular))
                         .foregroundColor(Theme.Colors.textSecondary)
                         .lineLimit(2)
                     
                     HStack(spacing: Theme.Spacing.xxSmall) {
+                        Image(systemName: letter.isDelivered ? "checkmark.circle.fill" : "clock.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(letter.isDelivered ? Theme.Colors.cherryBlossomPink : Theme.Colors.lavenderDark)
+                        
                         Text(formattedDate)
-                            .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.regular))
+                            .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.medium))
                             .foregroundColor(Theme.Colors.textSecondary)
                         
                         if letter.recurrence != .once {
-                            Text("•")
-                                .foregroundColor(Theme.Colors.textSecondary)
+                            Image(systemName: "repeat.circle.fill")
+                                .font(.system(size: 10))
+                                .foregroundColor(Theme.Colors.lavenderDark)
                             Text(letter.recurrence.label)
-                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.medium))
+                                .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.bold))
                                 .foregroundColor(Theme.Colors.lavenderDark)
                         }
                     }
@@ -209,19 +232,50 @@ struct LetterCard: View {
                 
                 // Chevron
                 Image(systemName: "chevron.right")
-                    .font(.system(size: Theme.Typography.caption, weight: Theme.Typography.semibold))
-                    .foregroundColor(Theme.Colors.textSecondary)
+                    .font(.system(size: Theme.Typography.subheadline, weight: Theme.Typography.bold))
+                    .foregroundColor(Theme.Colors.lavenderDark.opacity(0.5))
             }
             .padding(Theme.Spacing.medium)
-            .background(Theme.Colors.cardBackground)
-            .cornerRadius(Theme.CornerRadius.large)
-            .shadow(
-                color: Theme.Shadow.subtle.color,
-                radius: Theme.Shadow.subtle.radius,
-                x: Theme.Shadow.subtle.x,
-                y: Theme.Shadow.subtle.y
+            .background(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.xLarge)
+                    .fill(Theme.Colors.cardBackground)
             )
+            .overlay(
+                RoundedRectangle(cornerRadius: Theme.CornerRadius.xLarge)
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Theme.Colors.lavender.opacity(0.3),
+                                Theme.Colors.paleBlue.opacity(0.2)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1
+                    )
+            )
+            .shadow(
+                color: isPressed ? Theme.Shadow.medium.color : Theme.Shadow.subtle.color,
+                radius: isPressed ? Theme.Shadow.medium.radius : Theme.Shadow.subtle.radius,
+                x: 0,
+                y: isPressed ? Theme.Shadow.medium.y : Theme.Shadow.subtle.y
+            )
+            .scaleEffect(isPressed ? 0.98 : 1.0)
         }
+        .buttonStyle(PlainButtonStyle())
+        .simultaneousGesture(
+            DragGesture(minimumDistance: 0)
+                .onChanged { _ in
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        isPressed = true
+                    }
+                }
+                .onEnded { _ in
+                    withAnimation(.easeInOut(duration: 0.1)) {
+                        isPressed = false
+                    }
+                }
+        )
     }
 }
 
