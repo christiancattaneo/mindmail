@@ -1,0 +1,31 @@
+#!/bin/bash
+# Test notification scheduling for MindMail
+# Helps debug notification issues
+
+echo "📬 MindMail Notification Test"
+echo "============================="
+echo ""
+echo "⚠️  IMPORTANT: Notifications in iOS Simulator have limitations:"
+echo ""
+echo "1. Notifications may not appear immediately"
+echo "2. You must have notifications enabled for mindmail"
+echo "3. Simulator must be in foreground when notification fires"
+echo "4. Background delivery is unreliable in simulator"
+echo ""
+echo "🧪 Testing Tips:"
+echo ""
+echo "1. Schedule a letter for 2 minutes from now (not 1 month!)"
+echo "2. Keep simulator running and in foreground"
+echo "3. Wait 2 minutes - notification should appear"
+echo "4. If no notification:"
+echo "   - Check Settings → Notifications → mindmail → Allow"
+echo "   - Try on physical device instead"
+echo ""
+echo "5. To test immediately:"
+echo "   - Use Xcode: Debug → Simulate Local Notification"
+echo "   - Or schedule for 1 minute in the future"
+echo ""
+echo "📱 Best Practice:"
+echo "   Test notifications on a PHYSICAL device, not simulator"
+echo ""
+

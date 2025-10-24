@@ -54,12 +54,17 @@ struct LetterInboxView: View {
                 }
             }
             .sheet(isPresented: $showCompose) {
+                loadLetters() // Reload when sheet dismisses
+            } content: {
                 ComposeLetterView()
             }
             .sheet(item: $selectedLetter) { letter in
                 LetterReadingView(letter: letter)
             }
             .onAppear {
+                loadLetters()
+            }
+            .refreshable {
                 loadLetters()
             }
         }

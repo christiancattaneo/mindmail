@@ -308,22 +308,10 @@ struct TimePresetButton: View {
     
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: Theme.Spacing.xSmall) {
+            VStack(spacing: Theme.Spacing.small) {
                 Image(systemName: preset.icon)
-                    .font(.system(size: 28))
-                    .foregroundStyle(
-                        isSelected ?
-                        LinearGradient(
-                            colors: [Theme.Colors.lavenderDark, Theme.Colors.cherryBlossomPink],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ) :
-                        LinearGradient(
-                            colors: [Theme.Colors.textSecondary, Theme.Colors.textSecondary],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        )
-                    )
+                    .font(.system(size: 26))
+                    .foregroundColor(isSelected ? Theme.Colors.lavenderDark : Theme.Colors.textSecondary)
                 
                 Text(preset.label)
                     .font(.system(size: Theme.Typography.subheadline, weight: isSelected ? Theme.Typography.bold : Theme.Typography.semibold))
@@ -335,41 +323,31 @@ struct TimePresetButton: View {
                         .foregroundColor(Theme.Colors.textSecondary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
+                        .minimumScaleFactor(0.9)
                 }
             }
-            .frame(maxWidth: .infinity)
             .padding(.vertical, Theme.Spacing.medium)
+            .padding(.horizontal, Theme.Spacing.xSmall)
+            .frame(maxWidth: .infinity, minHeight: isFullWidth ? 60 : 100)
             .background(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
-                    .fill(
-                        isSelected ?
-                        LinearGradient(
-                            colors: [Theme.Colors.lavender.opacity(0.4), Theme.Colors.paleBlue.opacity(0.2)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ) :
-                        LinearGradient(
-                            colors: [Theme.Colors.cardBackground, Theme.Colors.cardBackground],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
+                    .fill(isSelected ? Theme.Colors.lavender.opacity(0.3) : Theme.Colors.cardBackground)
             )
             .overlay(
                 RoundedRectangle(cornerRadius: Theme.CornerRadius.large)
                     .strokeBorder(
-                        isSelected ? Theme.Colors.lavenderDark : Color.clear,
-                        lineWidth: isSelected ? 2 : 0
+                        isSelected ? Theme.Colors.lavenderDark : Theme.Colors.lavender.opacity(0.3),
+                        lineWidth: isSelected ? 2 : 1
                     )
             )
             .shadow(
                 color: isSelected ? Theme.Shadow.medium.color : Theme.Shadow.subtle.color,
-                radius: isSelected ? Theme.Shadow.medium.radius : Theme.Shadow.subtle.radius,
+                radius: isSelected ? 8 : 4,
                 x: 0,
-                y: isSelected ? Theme.Shadow.medium.y : Theme.Shadow.subtle.y
+                y: isSelected ? 3 : 1
             )
         }
+        .buttonStyle(PlainButtonStyle())
         .animation(Theme.Animation.spring, value: isSelected)
     }
 }
