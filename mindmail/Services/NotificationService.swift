@@ -34,7 +34,7 @@ class NotificationService {
         case .notDetermined:
             return try await center.requestAuthorization(options: [.alert, .sound, .badge])
             
-        case .denied:
+        case .denied, .ephemeral:
             return false
             
         @unknown default:
