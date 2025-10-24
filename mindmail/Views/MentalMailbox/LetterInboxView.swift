@@ -137,6 +137,15 @@ struct LetterInboxView: View {
                     LetterCard(letter: letter) {
                         selectedLetter = letter
                     }
+                    .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+                        if !letter.isDelivered {
+                            Button(role: .destructive) {
+                                deleteLetter(letter)
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -160,6 +169,30 @@ struct LetterInboxView: View {
         } catch {
             print("Error loading letters: \(error.localizedDescription)")
             letters = []
+        }
+    }
+    
+    // MARK: - Actions
+    
+    private func deleteLetter(_ letter: Letter) {
+        do {
+            try storage.deleteLetter(letter.id)
+            
+            // Cancel notification if scheduled
+            NotificationService.shared.cancelLetter(letter.id)
+            
+            // Reload letters
+            loadLetters()
+            
+            // Haptic feedback
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.success)
+        } catch {
+            print("Error deleting letter: \(error.localizedDescription)")
+            
+            // Error haptic
+            let generator = UINotificationFeedbackGenerator()
+            generator.notificationOccurred(.error)
         }
     }
 }
